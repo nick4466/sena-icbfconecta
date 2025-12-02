@@ -1,0 +1,513 @@
+/* Navbar Unificada para Madre Comunitaria - Estilos Centralizados */
+/* Versión 1.1 - Con Menú Desplegable */
+:root {
+    --primary-gradient-start: #667eea;
+    --primary-gradient-end: #764ba2;
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --white: #ffffff;
+    --light-gray: #f5f7fa;
+    --dark-text: #333333;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Navbar Principal */
+.navbar-madre {
+    background: #ffffff;
+    color: #764ba2;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    flex-wrap: wrap;
+}
+
+/* Header Left - Logo */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #764ba2;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.logo-link:hover {
+    opacity: 0.9;
+    text-decoration: none;
+}
+
+.header-left i {
+    font-size: 28px;
+    transition: transform 0.3s ease;
+}
+
+.logo-link:hover .navbar-logo {
+    transform: scale(1.05);
+}
+
+.header-left h1 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.navbar-logo {
+    height: 45px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Navbar Menu */
+.navbar-menu {
+    flex: 1;
+    margin: 0 40px;
+}
+
+.navbar-menu ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.navbar-menu ul li {
+    position: relative;
+}
+
+/* Estilos base para todos los botones del navbar */
+.navbar-menu a {
+    background-color: #ffffff;
+    color: #4a4a4a;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.navbar-menu a i {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-menu a:hover i {
+    transform: scale(1.1);
+}
+
+/* Estilo para el botón de Inicio (morado) */
+.navbar-menu a.btn-inicio {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-inicio:hover {
+    background-color: #9b59b6;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el botón de Matrículas (morado) */
+.navbar-menu a.btn-matriculas {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-matriculas:hover {
+    background-color: #9b59b6;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el botón de Gestión de Niños (verde) */
+.navbar-menu a.btn-gestion {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-gestion:hover {
+    background-color: #27ae60;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el botón de Llamar a Lista (azul) */
+.navbar-menu a.btn-asistencia {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-asistencia:hover {
+    background-color: #3498db;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el botón de Planeaciones (azul cielo/turquesa) */
+.navbar-menu a.btn-planeaciones {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-planeaciones:hover {
+    background-color: #5dade2;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el botón de Novedades (rojo) */
+.navbar-menu a.btn-novedades {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-novedades:hover {
+    background-color: #e74c3c;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el botón de Enviar Correos (naranja) */
+.navbar-menu a.btn-correos {
+    background-color: #ffffff;
+    color: #4a4a4a;
+}
+
+.navbar-menu a.btn-correos:hover {
+    background-color: #f39c12;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Header Right - User Menu */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Formulario de logout en línea (obsoleto con menú desplegable, pero se mantiene por si acaso) */
+.user-menu form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+/* Nombre de usuario en la barra de navegación */
+.navbar-user-name {
+    color: #764ba2;
+    font-weight: 500;
+    font-size: 15px;
+    margin-right: -10px; /* Ajusta el espacio con el ícono */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: translateX(0);
+    white-space: nowrap;
+    pointer-events: none; /* Evita que interfiera con el hover del menú */
+}
+
+/* Nav Buttons (Iconos de la barra de navegación) */
+.nav-btn {
+    color: #764ba2;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    padding: 6px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-family: inherit;
+    position: relative;
+}
+
+.nav-btn:hover {
+    background-color: rgba(118, 75, 162, 0.1);
+    transform: scale(1.1);
+}
+
+.nav-btn:active {
+    background-color: rgba(118, 75, 162, 0.2);
+}
+
+.nav-btn.logout-btn:hover {
+    background-color: rgba(255, 68, 68, 0.4);
+}
+
+/* === Estilos para el Menú Desplegable de Usuario === */
+
+/* Contenedor principal del menú desplegable */
+.user-menu-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Botón que activa el menú */
+.user-menu-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem; /* Ajusta el tamaño del ícono */
+    color: #764ba2; /* Color morado para el menú de usuario */
+}
+
+/* Contenido del menú desplegable (oculto por defecto) */
+.user-menu-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 220px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 100;
+    border-radius: 8px;
+    padding: 8px 0;
+    border: 1px solid #ddd;
+}
+
+/* Muestra el menú cuando se pasa el cursor sobre el contenedor */
+.user-menu-dropdown:hover .user-menu-content {
+    display: block;
+}
+
+/* Oculta el nombre en la navbar cuando el menú desplegable está activo (hover) */
+.user-menu-dropdown:hover ~ .navbar-user-name,
+.user-menu-dropdown:hover .navbar-user-name { /* Doble selector por compatibilidad */
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+/* Estilos para la información del usuario dentro del menú */
+.user-menu-content .user-info {
+    display: flex; /* Cambiado a flexbox */
+    flex-direction: column; /* Apila los elementos verticalmente */
+    align-items: center;
+    gap: 8px; /* Espacio entre la foto y el nombre */
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+    text-align: center; /* Centra el texto del nombre */
+}
+
+.user-menu-content .profile-picture {
+    width: 90px; /* Un poco más grande */
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+.user-menu-content .user-name {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+/* Estilos para los enlaces y el formulario dentro del menú */
+.user-menu-content a,
+.user-menu-content .logout-btn {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.user-menu-content a i,
+.user-menu-content .logout-btn i {
+    margin-right: 10px;
+    width: 20px; /* Alinea los íconos */
+    text-align: center;
+}
+
+/* Cambio de color al pasar el cursor sobre los elementos del menú */
+.user-menu-content a:hover,
+.user-menu-content .logout-btn:hover {
+    background-color: #f1f1f1;
+}
+
+/* Estilo específico para el botón de cerrar sesión */
+.user-menu-content .logout-btn {
+    color: #d9534f; /* Un color rojo para indicar una acción destructiva */
+}
+
+.user-menu-content .logout-btn:hover {
+    color: white;
+    background-color: #c9302c;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .navbar-menu {
+        margin: 0 20px;
+    }
+
+    .navbar-menu ul {
+        gap: 5px;
+    }
+
+    .navbar-menu a {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .navbar-menu a i {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-madre {
+        flex-wrap: wrap;
+        padding: 12px 20px;
+        gap: 15px;
+    }
+
+    .header-left h1 {
+        font-size: 18px;
+    }
+
+    .navbar-menu {
+        margin: 0;
+        order: 3;
+        width: 100%;
+    }
+
+    .navbar-menu ul {
+        flex-wrap: wrap;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .navbar-menu a {
+        padding: 6px 10px;
+        font-size: 12px;
+        flex: 1;
+        justify-content: center;
+        min-width: 80px;
+    }
+
+    .navbar-menu a i {
+        font-size: 13px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .nav-btn {
+        font-size: 16px;
+        padding: 4px 8px;
+    }
+
+    .header-right {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-madre {
+        padding: 10px 15px;
+    }
+
+    .header-left i {
+        font-size: 24px;
+    }
+
+    .header-left h1 {
+        font-size: 16px;
+    }
+
+    .navbar-menu a {
+        padding: 4px 8px;
+        font-size: 11px;
+        min-width: 60px;
+    }
+
+    .navbar-menu a i {
+        font-size: 12px;
+    }
+
+    .nav-btn {
+        font-size: 14px;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar-madre {
+    animation: fadeInDown 0.5s ease;
+}
+
+/* Focus states para accesibilidad */
+.navbar-menu a:focus,
+.nav-btn:focus {
+    outline: 2px solid rgba(118, 75, 162, 0.5);
+    outline-offset: 2px;
+}
+
+/* Estado deshabilitado */
+.navbar-menu a:disabled,
+.nav-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

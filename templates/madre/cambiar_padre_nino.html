@@ -1,0 +1,967 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cambiar Asignación de Padre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: #333; }
+    
+
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #7a3eb1;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .alert-info {
+      background: #cce7f0;
+      color: #0c5460;
+      border: 1px solid #b6d4fe;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .step {
+      padding: 30px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .step:last-child { border-bottom: none; }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .step-number {
+      background: #7a3eb1;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .step-title {
+      color: #7a3eb1;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .options-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .option-card {
+      flex: 1;
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .option-card.selected {
+      border-color: #7a3eb1;
+      background: #f3e9ff;
+    }
+
+    .option-card:hover {
+      border-color: #9B59B6;
+      background: #f8f4ff;
+    }
+
+    .option-card h4 {
+      color: #7a3eb1;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .option-card p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-section {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .form-group.full-width {
+      flex: 1 1 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #7a3eb1;
+      box-shadow: 0 0 0 3px rgba(122, 62, 177, 0.1);
+    }
+
+    .buscar-container {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .buscar-container .form-group {
+      flex: 1;
+    }
+
+    .btn-buscar {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s ease;
+      height: fit-content;
+    }
+
+    .btn-buscar:hover {
+      background: #218838;
+    }
+
+    .padre-info, .nino-info {
+      background: #f8f9fa;
+      border: 2px solid #28a745;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .padre-info.show, .nino-info.show {
+      display: block;
+    }
+
+    .padre-info h4, .nino-info h4 {
+      color: #28a745;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-datos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .info-dato {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-dato strong {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .info-dato span {
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      padding: 20px 0;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-cancel:hover {
+      background: #545b62;
+    }
+
+    .btn-submit {
+      background: #7a3eb1;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background: #6a2c91;
+    }
+
+    .btn-submit:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #7a3eb1;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .options-container {
+        flex-direction: column;
+      }
+      
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .buscar-container {
+        flex-direction: column;
+      }
+      
+      .info-datos {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'madre/navbar_madre.html' %}
+
+  <div class="container">
+    <h1>
+      <i class="fas fa-exchange-alt"></i>
+      Cambiar Asignación de Padre
+    </h1>
+    <div class="subtitle">
+      Hogar: <strong>{{ hogar_madre.nombre_hogar }}</strong>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+          <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="cambiarPadreForm">
+      {% csrf_token %}
+      <input type="hidden" name="accion" id="accionInput">
+      <input type="hidden" name="nino_seleccionado" id="ninoSeleccionado">
+      <input type="hidden" name="nuevo_padre_id" id="nuevoPadreId">
+      <input type="hidden" name="motivo_cambio" id="motivoCambio">
+      
+      <div class="form-container">
+        <!-- Paso 1: Seleccionar Niño -->
+        <div class="step">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Seleccionar Niño</div>
+          </div>
+
+          <div class="alert-info">
+            <i class="fas fa-info-circle"></i>
+            Seleccione el niño al cual desea cambiar la asignación de padre.
+          </div>
+
+          <div class="form-group">
+            <label for="{{ cambiar_form.nino.id_for_label }}">{{ cambiar_form.nino.label }}</label>
+            {{ cambiar_form.nino }}
+          </div>
+
+          <div class="nino-info" id="ninoInfo">
+            <h4><i class="fas fa-child"></i> Información del Niño Seleccionado</h4>
+            <div class="info-datos" id="ninoDatos">
+              <!-- Los datos se llenarán con JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Elegir Opción -->
+        <div class="step" id="stepOpcion" style="opacity: 0.5; pointer-events: none;">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Elegir Nueva Asignación</div>
+          </div>
+
+          <div class="options-container">
+            <div class="option-card" data-option="existente" id="optionExistente">
+              <h4><i class="fas fa-search"></i> Asignar a Padre Existente</h4>
+              <p>Buscar un padre que ya está registrado en el sistema</p>
+            </div>
+            <div class="option-card" data-option="nuevo" id="optionNuevo">
+              <h4><i class="fas fa-user-plus"></i> Registrar Nuevo Padre</h4>
+              <p>Crear un nuevo registro de padre y asignar el niño</p>
+            </div>
+          </div>
+
+          <!-- Opción: Padre Existente -->
+          <div class="form-section" id="seccionExistente">
+            <h4><i class="fas fa-search"></i> Buscar Padre Existente</h4>
+            
+            <div class="buscar-container">
+              <div class="form-group">
+                <label for="{{ buscar_form.documento.id_for_label }}">{{ buscar_form.documento.label }}</label>
+                {{ buscar_form.documento }}
+              </div>
+              <button type="button" class="btn-buscar" id="btnBuscarPadreExistente">
+                <i class="fas fa-search"></i> Buscar
+              </button>
+            </div>
+
+            <div class="loading" id="loadingExistente">
+              <div class="spinner"></div>
+              <p>Buscando padre...</p>
+            </div>
+
+            <div class="padre-info" id="padreExistenteInfo">
+              <h4><i class="fas fa-user-check"></i> Padre Encontrado</h4>
+              <div class="info-datos" id="padreExistenteDatos">
+                <!-- Los datos se llenarán con JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Opción: Nuevo Padre -->
+          <div class="form-section" id="seccionNuevo">
+            <h4><i class="fas fa-user-plus"></i> Datos del Nuevo Padre</h4>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="{{ padre_form.nombres.id_for_label }}">{{ padre_form.nombres.label }}</label>
+                {{ padre_form.nombres }}
+              </div>
+              <div class="form-group">
+                <label for="{{ padre_form.apellidos.id_for_label }}">{{ padre_form.apellidos.label }}</label>
+                {{ padre_form.apellidos }}
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="{{ padre_form.tipo_documento.id_for_label }}">{{ padre_form.tipo_documento.label }}</label>
+                {{ padre_form.tipo_documento }}
+              </div>
+              <div class="form-group">
+                <label for="{{ padre_form.documento.id_for_label }}">{{ padre_form.documento.label }}</label>
+                {{ padre_form.documento }}
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="{{ padre_form.correo.id_for_label }}">{{ padre_form.correo.label }}</label>
+                {{ padre_form.correo }}
+              </div>
+              <div class="form-group">
+                <label for="{{ padre_form.telefono.id_for_label }}">{{ padre_form.telefono.label }}</label>
+                {{ padre_form.telefono }}
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="{{ padre_form.direccion.id_for_label }}">{{ padre_form.direccion.label }}</label>
+                {{ padre_form.direccion }}
+              </div>
+              <div class="form-group">
+                <label for="{{ padre_form.ocupacion.id_for_label }}">{{ padre_form.ocupacion.label }}</label>
+                {{ padre_form.ocupacion }}
+              </div>
+            </div>
+
+            <div class="form-row" id="otra-ocupacion-container" style="display: none;">
+              <div class="form-group">
+                <label for="{{ padre_form.otra_ocupacion.id_for_label }}">{{ padre_form.otra_ocupacion.label }}</label>
+                {{ padre_form.otra_ocupacion }}
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="{{ padre_form.estrato.id_for_label }}">{{ padre_form.estrato.label }}</label>
+                {{ padre_form.estrato }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 3: Motivo del Cambio -->
+        <div class="step" id="stepMotivo" style="opacity: 0.5; pointer-events: none;">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Motivo del Cambio de Asignación</div>
+          </div>
+
+          <div class="alert-info">
+            <i class="fas fa-exclamation-circle"></i>
+            Es importante documentar el motivo del cambio de asignación para mantener un registro institucional adecuado.
+          </div>
+
+          <div class="form-group">
+            <label for="selectMotivo">Seleccione el motivo del cambio <span style="color: #dc3545;">*</span></label>
+            <select id="selectMotivo" class="form-control" required>
+              <option value="">-- Seleccione una opción --</option>
+              <optgroup label="Cambios legales o judiciales">
+                <option value="cambio_custodia">Cambio de custodia legal</option>
+                <option value="sentencia_judicial">Sentencia judicial que modifica el tutor responsable</option>
+                <option value="adopcion">Adopción o proceso de adopción en curso</option>
+                <option value="reconocimiento_legal">Reconocimiento legal de paternidad/maternidad</option>
+                <option value="tutoria_legal">Tutoría legal otorgada por juez o autoridad competente</option>
+              </optgroup>
+              <optgroup label="Situaciones del tutor anterior">
+                <option value="fallecimiento">Fallecimiento del padre/tutor anterior</option>
+                <option value="renuncia">Renuncia voluntaria a la custodia</option>
+                <option value="desconocimiento_paradero">Desconocimiento del paradero del padre/tutor anterior</option>
+                <option value="abandono">Declaración de abandono</option>
+                <option value="cambio_temporal">Cambio temporal de tutor por hospitalización, viaje o incapacidad</option>
+              </optgroup>
+              <optgroup label="Decisiones institucionales">
+                <option value="traslado_institucional">Traslado del niño a otro hogar por decisión institucional</option>
+                <option value="riesgo_vulneracion">Riesgo o vulneración de derechos detectada</option>
+                <option value="solicitud_icbf">Solicitud formal del ICBF o entidad competente</option>
+                <option value="programa_especial">Ingreso del niño a un programa especial que asigna tutor diferente</option>
+                <option value="acogida_temporal">Asignación por acogida temporal o familia sustituta</option>
+              </optgroup>
+              <optgroup label="Reunificación familiar">
+                <option value="reunificacion">Reunificación familiar (regresa con un familiar directo)</option>
+                <option value="integracion_nucleo">Integración del niño a un nuevo núcleo familiar</option>
+                <option value="inclusion_nucleo">Inclusión del niño al núcleo familiar ya registrado</option>
+                <option value="reunificacion_adicional">Reunificación familiar con un menor adicional</option>
+              </optgroup>
+              <optgroup label="Correcciones administrativas">
+                <option value="error_registro">Cambio por error en la información previa o registro equivocado</option>
+                <option value="error_anterior">Error en el registro anterior</option>
+                <option value="cambio_documentos">Cambio de documentos o identificación del niño que requiere actualizar el tutor</option>
+                <option value="registro_multiple">Solicitud institucional para registro de varios infantes bajo el mismo responsable</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="observacionesMotivo">Observaciones adicionales (opcional)</label>
+            <textarea id="observacionesMotivo" name="observaciones_motivo" rows="4" class="form-control" placeholder="Agregue cualquier información adicional relevante sobre el cambio..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="{% url 'listar_ninos' %}" class="btn btn-cancel">
+          <i class="fas fa-arrow-left"></i> Cancelar
+        </a>
+        <button type="submit" class="btn btn-submit" id="btnSubmit" disabled>
+          <i class="fas fa-exchange-alt"></i> Cambiar Asignación
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const ninoSelect = document.getElementById('{{ cambiar_form.nino.id_for_label }}');
+      const ninoInfo = document.getElementById('ninoInfo');
+      const stepOpcion = document.getElementById('stepOpcion');
+      const stepMotivo = document.getElementById('stepMotivo');
+      const btnSubmit = document.getElementById('btnSubmit');
+      const accionInput = document.getElementById('accionInput');
+      const ninoSeleccionado = document.getElementById('ninoSeleccionado');
+      const nuevoPadreId = document.getElementById('nuevoPadreId');
+      const motivoCambio = document.getElementById('motivoCambio');
+      const selectMotivo = document.getElementById('selectMotivo');
+
+      // Elementos de opciones
+      const optionExistente = document.getElementById('optionExistente');
+      const optionNuevo = document.getElementById('optionNuevo');
+      const seccionExistente = document.getElementById('seccionExistente');
+      const seccionNuevo = document.getElementById('seccionNuevo');
+
+      // Elementos de búsqueda
+      const btnBuscarPadreExistente = document.getElementById('btnBuscarPadreExistente');
+      const documentoExistenteInput = document.getElementById('{{ buscar_form.documento.id_for_label }}');
+      const loadingExistente = document.getElementById('loadingExistente');
+      const padreExistenteInfo = document.getElementById('padreExistenteInfo');
+
+      // Elementos del formulario de nuevo padre
+      const ocupacionSelect = document.getElementById('{{ padre_form.ocupacion.id_for_label }}');
+      const otraOcupacionContainer = document.getElementById('otra-ocupacion-container');
+
+      let opcionSeleccionada = null;
+      let padreEncontrado = null;
+
+      // Manejar selección de niño
+      if (ninoSelect) {
+        ninoSelect.addEventListener('change', function() {
+          if (this.value) {
+            const ninoOption = this.options[this.selectedIndex];
+            const ninoText = ninoOption.text;
+            
+            // Simular datos del niño (en una implementación real, harías una llamada AJAX)
+            mostrarNinoSeleccionado(ninoText);
+            habilitarPasoOpcion();
+            ninoSeleccionado.value = this.value;
+          } else {
+            ninoInfo.classList.remove('show');
+            deshabilitarPasoOpcion();
+          }
+        });
+      }
+
+      function mostrarNinoSeleccionado(ninoText) {
+        const ninoDatos = document.getElementById('ninoDatos');
+        ninoDatos.innerHTML = `
+          <div class="info-dato">
+            <strong>Niño seleccionado:</strong>
+            <span>${ninoText}</span>
+          </div>
+        `;
+        ninoInfo.classList.add('show');
+      }
+
+      function habilitarPasoOpcion() {
+        stepOpcion.style.opacity = '1';
+        stepOpcion.style.pointerEvents = 'auto';
+      }
+
+      function deshabilitarPasoOpcion() {
+        stepOpcion.style.opacity = '0.5';
+        stepOpcion.style.pointerEvents = 'none';
+        stepMotivo.style.opacity = '0.5';
+        stepMotivo.style.pointerEvents = 'none';
+        btnSubmit.disabled = true;
+      }
+
+      // Manejar selección de opciones
+      optionExistente.addEventListener('click', function() {
+        seleccionarOpcion('existente');
+      });
+
+      optionNuevo.addEventListener('click', function() {
+        seleccionarOpcion('nuevo');
+      });
+
+      function seleccionarOpcion(opcion) {
+        // Limpiar selecciones previas
+        document.querySelectorAll('.option-card').forEach(card => {
+          card.classList.remove('selected');
+        });
+        document.querySelectorAll('.form-section').forEach(section => {
+          section.classList.remove('active');
+        });
+
+        // Seleccionar nueva opción
+        opcionSeleccionada = opcion;
+        accionInput.value = opcion === 'existente' ? 'cambiar_existente' : 'cambiar_nuevo';
+        
+        if (opcion === 'existente') {
+          optionExistente.classList.add('selected');
+          seccionExistente.classList.add('active');
+          // Deshabilitar campos del formulario de nuevo padre
+          deshabilitarCamposNuevoPadre(true);
+        } else {
+          optionNuevo.classList.add('selected');
+          seccionNuevo.classList.add('active');
+          // Habilitar campos del formulario de nuevo padre
+          deshabilitarCamposNuevoPadre(false);
+        }
+
+        // Habilitar paso del motivo cuando se selecciona una opción
+        habilitarPasoMotivo();
+        verificarFormularioCompleto();
+      }
+
+      function habilitarPasoMotivo() {
+        stepMotivo.style.opacity = '1';
+        stepMotivo.style.pointerEvents = 'auto';
+      }
+
+      function deshabilitarCamposNuevoPadre(deshabilitar) {
+        // Deshabilitar/habilitar todos los campos del formulario de nuevo padre
+        const camposNuevoPadre = document.querySelectorAll('#seccionNuevo input, #seccionNuevo select');
+        camposNuevoPadre.forEach(campo => {
+          if (deshabilitar) {
+            campo.disabled = true;
+            campo.removeAttribute('required');
+          } else {
+            campo.disabled = false;
+            // Restaurar required solo en campos obligatorios
+            if (['padre-nombres', 'padre-apellidos', 'padre-documento', 'padre-correo', 'padre-telefono'].includes(campo.id)) {
+              campo.setAttribute('required', 'required');
+            }
+          }
+        });
+      }
+
+      // Manejar búsqueda de padre existente
+      if (btnBuscarPadreExistente) {
+        btnBuscarPadreExistente.addEventListener('click', function() {
+          const documento = documentoExistenteInput.value.trim();
+          
+          if (!documento) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Documento requerido',
+              text: 'Por favor ingrese el documento del padre.'
+            });
+            return;
+          }
+
+          loadingExistente.style.display = 'block';
+          padreExistenteInfo.classList.remove('show');
+          
+          fetch(`{% url 'buscar_padre_ajax' %}?documento=${documento}`)
+            .then(response => response.json())
+            .then(data => {
+              loadingExistente.style.display = 'none';
+              
+              if (data.encontrado && data.padre) {
+                mostrarPadreExistente(data.padre);
+                padreEncontrado = data.padre;
+                nuevoPadreId.value = data.padre.id;
+                verificarFormularioCompleto();
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Padre no encontrado',
+                  text: data.mensaje || 'No se encontró un padre con ese documento.'
+                });
+                padreEncontrado = null;
+                nuevoPadreId.value = '';
+                verificarFormularioCompleto();
+              }
+            })
+            .catch(error => {
+              loadingExistente.style.display = 'none';
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error en la búsqueda. Intente nuevamente.'
+              });
+            });
+        });
+
+        documentoExistenteInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            btnBuscarPadreExistente.click();
+          }
+        });
+      }
+
+      function mostrarPadreExistente(padre) {
+        console.log('Mostrando padre encontrado:', padre);
+        const padreExistenteDatos = document.getElementById('padreExistenteDatos');
+        padreExistenteDatos.innerHTML = `
+          <div class="info-dato">
+            <strong>Nombres:</strong>
+            <span>${padre.nombres}</span>
+          </div>
+          <div class="info-dato">
+            <strong>Apellidos:</strong>
+            <span>${padre.apellidos}</span>
+          </div>
+          <div class="info-dato">
+            <strong>Documento:</strong>
+            <span>${padre.documento}</span>
+          </div>
+          <div class="info-dato">
+            <strong>Correo:</strong>
+            <span>${padre.correo}</span>
+          </div>
+          <div class="info-dato">
+            <strong>Teléfono:</strong>
+            <span>${padre.telefono}</span>
+          </div>
+          <div class="info-dato">
+            <strong>Ocupación:</strong>
+            <span>${padre.ocupacion}</span>
+          </div>
+        `;
+        padreExistenteInfo.classList.add('show');
+      }
+
+      // Manejar ocupación "otro"
+      if (ocupacionSelect) {
+        ocupacionSelect.addEventListener('change', function() {
+          if (this.value === 'otro') {
+            otraOcupacionContainer.style.display = 'flex';
+          } else {
+            otraOcupacionContainer.style.display = 'none';
+          }
+          verificarFormularioCompleto();
+        });
+      }
+
+      // Verificar si el formulario está completo
+      function verificarFormularioCompleto() {
+        let completo = false;
+        
+        console.log('Verificando formulario completo...');
+        console.log('Niño seleccionado:', ninoSeleccionado.value);
+        console.log('Opción seleccionada:', opcionSeleccionada);
+        console.log('Padre encontrado:', padreEncontrado);
+        console.log('Nuevo padre ID:', nuevoPadreId.value);
+        console.log('Motivo seleccionado:', selectMotivo.value);
+        
+        if (ninoSeleccionado.value && opcionSeleccionada && selectMotivo.value) {
+          if (opcionSeleccionada === 'existente') {
+            completo = padreEncontrado !== null && nuevoPadreId.value !== '';
+            console.log('Verificando opción existente, completo:', completo);
+          } else if (opcionSeleccionada === 'nuevo') {
+            // Verificar campos obligatorios del nuevo padre
+            const camposObligatorios = [
+              '{{ padre_form.nombres.id_for_label }}',
+              '{{ padre_form.apellidos.id_for_label }}',
+              '{{ padre_form.documento.id_for_label }}',
+              '{{ padre_form.correo.id_for_label }}',
+              '{{ padre_form.telefono.id_for_label }}'
+            ];
+            
+            completo = camposObligatorios.every(id => {
+              const campo = document.getElementById(id);
+              return campo && campo.value.trim() !== '';
+            });
+            console.log('Verificando opción nuevo, completo:', completo);
+          }
+        }
+        
+        btnSubmit.disabled = !completo;
+        console.log('Botón submit deshabilitado:', btnSubmit.disabled);
+      }
+
+      // Agregar listeners a campos de nuevo padre
+      document.querySelectorAll('#seccionNuevo input, #seccionNuevo select').forEach(campo => {
+        campo.addEventListener('input', verificarFormularioCompleto);
+        campo.addEventListener('change', verificarFormularioCompleto);
+      });
+
+      // Agregar listener al select de motivo
+      if (selectMotivo) {
+        selectMotivo.addEventListener('change', function() {
+          motivoCambio.value = this.value;
+          verificarFormularioCompleto();
+        });
+      }
+
+      // Inicializar: deshabilitar campos de nuevo padre por defecto
+      deshabilitarCamposNuevoPadre(true);
+
+      // Verificar formulario al cargar
+      verificarFormularioCompleto();
+
+      // Handler para el submit del formulario
+      const form = document.getElementById('cambiarPadreForm');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          console.log('Formulario enviado');
+          console.log('Acción:', accionInput.value);
+          console.log('Niño seleccionado:', ninoSeleccionado.value);
+          console.log('Nuevo padre ID:', nuevoPadreId.value);
+          
+          // Validar antes de enviar
+          if (!ninoSeleccionado.value) {
+            e.preventDefault();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Debe seleccionar un niño.'
+            });
+            return false;
+          }
+          
+          if (!accionInput.value) {
+            e.preventDefault();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Debe seleccionar una opción (padre existente o nuevo padre).'
+            });
+            return false;
+          }
+          
+          if (!motivoCambio.value) {
+            e.preventDefault();
+            Swal.fire({
+              icon: 'error',
+              title: 'Motivo requerido',
+              text: 'Debe seleccionar el motivo del cambio de asignación.'
+            });
+            return false;
+          }
+          
+          if (accionInput.value === 'cambiar_existente' && !nuevoPadreId.value) {
+            e.preventDefault();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Debe buscar y seleccionar un padre existente.'
+            });
+            return false;
+          }
+          
+          console.log('Formulario válido, enviando...');
+          // El formulario se enviará normalmente
+        });
+      }
+    });
+  </script>
+
+  {% if messages %}
+    <script>
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+          Swal.fire({
+            title: '¡Cambio exitoso!',
+            text: '{{ message|escapejs }}',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+        {% endif %}
+      {% endfor %}
+    </script>
+  {% endif %}
+</body>
+</html>

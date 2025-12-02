@@ -1,0 +1,92 @@
+{% load static %}
+<!-- Navbar Unificada para Madre Comunitaria -->
+<link rel="stylesheet" href="{% static 'css/navbar_madre.css' %}">
+
+<header class="navbar-madre">
+    <div class="header-left">
+        <a href="{% url 'madre_dashboard' %}" class="logo-link">
+            <img src="{% static 'img/logoSinFondo.png' %}" alt="ICBF Conecta" class="navbar-logo">
+            <h1>ICBF Conecta</h1>
+        </a>
+    </div>
+
+    <nav class="navbar-menu">
+        <ul>
+            <li><a href="{% url 'madre_dashboard' %}" class="btn-inicio"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{% url 'listar_ninos' %}" class="btn-matriculas"><i class="fas fa-user-graduate"></i> Matrículas</a></li>
+            <li><a href="{% url 'gestion_ninos' %}" class="btn-gestion"><i class="fas fa-users"></i> Gestión de Niños</a></li>
+            <li><a href="{% url 'asistencia_form' %}" class="btn-asistencia"><i class="fas fa-clipboard-list"></i> Llamar a Lista</a></li>
+            <li><a href="{% url 'planeaciones:lista_planeaciones' %}" class="btn-planeaciones"><i class="fas fa-calendar-alt"></i> Planeaciones</a></li>
+            <li><a href="{% url 'novedades:novedades_list' %}" class="btn-novedades"><i class="fas fa-exclamation-circle"></i> Novedades</a></li>
+            <li><a href="{% url 'correos:enviar' %}" class="btn-correos"><i class="fas fa-envelope"></i> Enviar Correos</a></li>
+        </ul>
+    </nav>
+
+    <div class="header-right">
+        <!-- Nombre de usuario visible en la barra de navegación -->
+        <span class="navbar-user-name">{{ nombre_madre }}</span>
+
+        <div class="user-menu-dropdown">
+            <button class="user-menu-button nav-btn">
+                <i class="fas fa-user-circle"></i>
+            </button>
+
+            <div class="user-menu-content">
+                <div class="user-info">
+                    <form id="form-foto-perfil" method="post" action="{% url 'actualizar_foto_perfil' %}" enctype="multipart/form-data" style="display: inline;">
+                        {% csrf_token %}
+                        <label for="input-foto-perfil" class="profile-picture-link" style="cursor: pointer;" title="Haz clic para cambiar tu foto">
+                            <img id="img-foto-perfil" src="{% if foto_perfil_url %}{{ foto_perfil_url }}{% else %}{% static 'img/default_user.png' %}{% endif %}"
+                             alt="Foto de perfil"
+                             class="profile-picture">
+                        </label>
+                        <input type="file" id="input-foto-perfil" name="foto_madre" accept="image/*" style="display: none;">
+                    </form>
+                    <span class="user-name">{{ nombre_madre }}</span>
+                </div>
+
+                <a href="{% url 'editar_perfil' %}">
+                    <i class="fas fa-user-edit"></i> Editar Perfil
+                </a>
+                <a href="{% url 'cambiar_contrasena' %}">
+                    <i class="fas fa-key"></i> Cambiar Contraseña
+                </a>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('input-foto-perfil');
+    const form = document.getElementById('form-foto-perfil');
+    const profileImage = document.getElementById('img-foto-perfil');
+
+    fileInput.addEventListener('change', function() {
+        if (fileInput.files && fileInput.files[0]) {
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.new_photo_url) {
+                    profileImage.src = data.new_photo_url;
+                }
+            });
+        }
+    });
+});
+</script>

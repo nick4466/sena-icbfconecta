@@ -1,0 +1,10 @@
+<div class="dimension-rating">
+  <strong>{{ dimension_name }}</strong>
+  <div class="stars-display">
+    {% with rating_val=rating|default:0 %}
+      {% for i in "12345" %}
+        {% if i|add:0 <= rating_val %}★{% else %}<span class="inactive">★</span>{% endif %}
+      {% endfor %}
+    {% endwith %}
+  </div>
+</div>

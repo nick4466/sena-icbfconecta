@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lista de Administradores</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f3f6fa;
+      color: #333;
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(180deg, #004080, #007bff);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 25px 0;
+    }
+    .sidebar img { height: 70px; margin: 0 auto 20px; }
+    .sidebar h2 { text-align: center; font-weight: 700; margin-bottom: 25px; font-size: 18px; }
+    .sidebar a {
+      color: white; text-decoration: none; padding: 14px 25px; display: flex;
+      align-items: center; gap: 10px; font-weight: 500; transition: background 0.3s ease;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background: rgba(255, 255, 255, 0.15); border-left: 4px solid #ffffff;
+    }
+    /* Estilos para el menú desplegable */
+    .sidebar .dropdown { position: relative; }
+    .sidebar .dropdown .dropdown-menu {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: 0;
+      background-color: #004080;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 0 8px 8px 0;
+    }
+    .sidebar .dropdown:hover .dropdown-menu { display: block; }
+    .sidebar .dropdown-menu a {
+      padding: 12px 16px;
+      border-left: none !important; /* Quitar borde del estado :hover o .active */
+    }
+    .sidebar .logout { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px; }
+    .main { flex: 1; padding: 40px; } /* Estilo base */
+    .main header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .main header h1 { font-size: 28px; color: #004080; font-weight: 700; }
+    .content-container {
+      background-color: white;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    .top-bar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+    .page-actions { margin-top: 32px; /* Alinear con los filtros */ }
+    .filtros-form {
+      display: flex; gap: 15px; margin-bottom: 20px; background-color: #f8f9fa;
+      padding: 20px; border-radius: 12px;
+    }
+    .filtros-form input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+    .filtros-form .form-group { flex: 1; }
+    .filtros-form label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; font-size: 14px; }
+    .filtros-form .actions { display: flex; align-items: flex-end; gap: 10px; }
+    .btn-filtro { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; color: white; }
+    .btn-buscar { background-color: #007bff; }
+    .btn-limpiar { background-color: #6c757d; text-decoration: none; display: inline-block; text-align: center; }
+    .btn-crear {
+      background: linear-gradient(90deg, #007bff, #0056b3); color: white; padding: 10px 20px;
+      border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 16px;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 14px; text-align: left; border-bottom: 1px solid #e9ecef; }
+    th { background-color: #f8f9fa; color: #003366; font-weight: 600; }
+    td { color: #555; }
+    tbody tr:hover { background-color: #f1f3f5; }
+    .acciones {
+      display: flex; /* 💡 CORRECCIÓN: Usar flexbox para alinear los botones */
+      align-items: center; /* Centrar verticalmente los botones en la celda */
+      gap: 5px; /* Espacio entre botones */
+    }
+    .acciones a, .acciones button {
+      text-decoration: none; color: white; padding: 6px 12px;
+      border-radius: 6px; font-weight: 500; margin-right: 5px;
+      border: 1px solid transparent; cursor: pointer; font-family: "Poppins", sans-serif; font-size: 14px;
+    }
+    .btn-editar { background: linear-gradient(90deg, #007bff, #0056b3); }
+    .btn-eliminar { background: linear-gradient(90deg, #dc3545, #c82333); }
+    .messages { list-style: none; padding: 0; margin: 0 0 20px 0; }
+    .messages li {
+      padding: 15px; border-radius: 8px; color: white;
+      font-weight: 500; display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    .messages li.success { background-color: #28a745; }
+    .messages li.error { background-color: #dc3545; }
+    .close-message { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+    /* --- ESTILOS DE PAGINACIÓN --- */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+      gap: 8px;
+    }
+    .pagination a, .pagination span {
+      color: #007bff;
+      padding: 8px 14px;
+      text-decoration: none;
+      transition: background-color .3s;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .pagination a:hover { background-color: #f1f1f1; }
+    .pagination .current { background-color: #007bff; color: white; border-color: #007bff; }
+    .pagination .disabled { color: #ccc; border-color: #ddd; }
+    /* --- FIN ESTILOS DE PAGINACIÓN --- */
+
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo ICBF" />
+    <h2>ICBF Conecta</h2>
+    <a href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-tachometer-alt"></i> Panel Principal</a>
+    <a href="{% url 'listar_hogares' %}"><i class="fa-solid fa-house"></i> Hogares</a>
+    <a href="{% url 'listar_madres' %}"><i class="fa-solid fa-user-group"></i> Madres</a>
+    <a href="{% url 'listar_administradores' %}" class="active"><i class="fa-solid fa-user-shield"></i> Administradores</a>
+    <a href="{% url 'admin_reportes' %}" ><i class="fa-solid fa-chart-line"></i> Reportes</a>
+    <div class="dropdown">
+      <a href="#"><i class="fa-solid fa-cog"></i> Ajustes</a>
+      <div class="dropdown-menu">
+        <a href="{% url 'editar_perfil' %}"><i class="fa-solid fa-user-pen"></i> Editar Perfil</a>
+        <a href="{% url 'cambiar_contrasena' %}"><i class="fa-solid fa-key"></i> Cambiar Contraseña</a>
+      </div>
+    </div>
+    <div class="logout">
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: white; cursor: pointer; padding: 14px 25px; display: flex; align-items: center; gap: 10px; font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 500; width: 100%; text-align: left;">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+            </button>
+        </form>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header>
+      <h1>Gestión de Administradores</h1>
+    </header>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">
+            {{ message }}
+            <button class="close-message" onclick="this.parentElement.style.display='none';">&times;</button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="content-container">
+      <div class="top-bar">
+        <form method="get" action="{% url 'listar_administradores' %}" class="filtros-form">
+          <div class="form-group">
+            <label for="nombre">Buscar por Nombre</label>
+            <input type="text" name="nombre" id="nombre" value="{{ filtros.nombre|default:'' }}" placeholder="Nombre o Apellido">
+          </div>
+          <div class="form-group">
+            <label for="documento">Buscar por Documento</label>
+            <input type="text" name="documento" id="documento" value="{{ filtros.documento|default:'' }}" placeholder="Número de documento">
+          </div>
+          <div class="actions">
+            <button type="submit" class="btn-filtro btn-buscar">Buscar</button>
+            <a href="{% url 'listar_administradores' %}" class="btn-filtro btn-limpiar">Limpiar</a>
+          </div>
+        </form>
+        <div class="page-actions">
+          <a href="{% url 'crear_administrador' %}" class="btn-crear"><i class="fas fa-plus" style="margin-right: 8px;"></i> Nuevo Administrador</a>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>Documento</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for admin in administradores %}
+          <tr>
+            <td>
+              {% if admin.foto_admin %}
+                <img src="{{ admin.foto_admin.url }}" alt="Foto de {{ admin.nombres }}" style="width:48px; height:48px; object-fit:cover; border-radius:50%; border:2px solid #007bff; background:#f8f9fa;" />
+              {% else %}
+                <i class="fa-solid fa-user fa-2x" style="color:#ccc;"></i>
+              {% endif %}
+            </td>
+            <td>{{ admin.nombres|default:"N/A" }}</td>
+            <td>{{ admin.apellidos|default:"N/A" }}</td>
+            <td>{{ admin.documento }}</td>
+            <td>{{ admin.correo }}</td>
+            <td class="acciones">
+              <a href="{% url 'editar_administrador' admin.id %}" class="btn-editar">Editar</a>
+              <a href="{% url 'eliminar_administrador' admin.id %}" class="btn-eliminar" onclick="return confirm('¿Eliminar este administrador?');">Eliminar</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" style="text-align:center; color:#888;">No hay administradores registrados.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Controles de Paginación -->
+      <div class="pagination">
+        {% if administradores.has_previous %}
+          <a href="?page=1{% for key, value in filtros.items %}&{{ key }}={{ value }}{% endfor %}">&laquo; Primera</a>
+          <a href="?page={{ administradores.previous_page_number }}{% for key, value in filtros.items %}&{{ key }}={{ value }}{% endfor %}">Anterior</a>
+        {% else %}
+          <span class="disabled">&laquo; Primera</span>
+          <span class="disabled">Anterior</span>
+        {% endif %}
+
+        <span class="current">
+          Página {{ administradores.number }} de {{ administradores.paginator.num_pages }}.
+        </span>
+
+        {% if administradores.has_next %}
+          <a href="?page={{ administradores.next_page_number }}{% for key, value in filtros.items %}&{{ key }}={{ value }}{% endfor %}">Siguiente</a>
+          <a href="?page={{ administradores.paginator.num_pages }}{% for key, value in filtros.items %}&{{ key }}={{ value }}{% endfor %}">Última &raquo;</a>
+        {% else %}
+          <span class="disabled">Siguiente</span>
+          <span class="disabled">Última &raquo;</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,629 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desarrollo Infantil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+
+    }
+
+
+    .tabla-registros {
+      max-width: 1100px; margin: 40px auto; background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 14px; padding: 30px; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 { text-align: center; margin-bottom: 25px; font-size: 32px; color: #7a3eb1; }
+
+    .filtros-y-botones { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+
+    .filtros-form { display: flex; gap: 10px; align-items: center; }
+    .filtros-form select, .filtros-form input { padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+    .filtros-form button { background-color: #8e44ad; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+
+    .btn-agregar, .btn-volver {
+      background-color: #9B59B6; color: white; border: none; padding: 10px 20px;
+      font-size: 16px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-agregar:hover { background-color: #8e44ad; }
+
+    .btn-volver {
+      background-color: #6c757d;
+    }
+    .btn-volver:hover {
+      background-color: #5a6268;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .acciones .btn-accion,
+    .acciones .ver-detalles {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      padding: 4px 6px;
+      margin: 0 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform 0.2s;
+      text-decoration: none;
+      min-width: 28px;
+      min-height: 28px;
+    }
+    .acciones .btn-accion i,
+    .acciones .ver-detalles i {
+      font-size: 15px;
+    }
+    .acciones .btn-accion:hover, .acciones .ver-detalles:hover { transform: scale(1.1); }
+    .btn-verde { background: #28a745; color: white; }
+    .btn-azul  { background: #007bff; color: white; }
+    .btn-rojo  { background: #dc3545; color: white; }
+
+    .modal {
+      display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center;
+    }
+    .modal-contenido {
+      background-color: #fff; margin: 10% auto; padding: 30px; border: 1px solid #ccc;
+      width: 80%; max-width: 600px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      animation: zoomIn 0.3s ease; max-height: 80vh; overflow-y: auto;
+    }
+    .modal-contenido::-webkit-scrollbar { width: 8px; }
+    .modal-contenido::-webkit-scrollbar-thumb { background-color: #c3a3e0; border-radius: 4px; }
+    .modal-contenido::-webkit-scrollbar-track { background-color: #f1f1f1; }
+
+    @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .cerrar-modal { float: right; cursor: pointer; font-size: 24px; font-weight: bold; color: #aaa; }
+    .cerrar-modal:hover { color: #000; }
+    .modal-contenido h2 { margin-top: 0; color: #7a3eb1; }
+    .modal-contenido p { margin: 12px 0; font-size: 16px; line-height: 1.5; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px 25px; margin-top: 15px; }
+    .modal-item { display: flex; flex-direction: column; }
+    .modal-item strong { color: #5e3370; font-size: 15px; margin-bottom: 4px; }
+    .modal-item span { font-size: 16px; }
+    .modal-item.full-width { grid-column: 1 / -1; }
+    .modal-item blockquote { margin: 5px 0 0 0; padding: 10px 15px; background-color: #f8f6fa; border-left: 4px solid #c3a3e0; border-radius: 4px; font-style: italic; color: #333; }
+  </style>
+  <style>
+    .display-stars { color: #f5b301; font-size: 1.2rem; }
+    .display-stars .inactive { color: #ddd; }
+    .dimension-block { margin-top: 15px; }
+    .dimension-block p { margin: 5px 0; }
+  </style>
+  <style>
+    /* Custom properties para colores consistentes */
+    :root {
+      --primary-color: #9B59B6;
+      --star-color: #f5b301;
+    }
+    .mensaje-success {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      transition: opacity 0.5s ease;
+    }
+    .mensaje-error {
+      background-color: #dc3545; /* Rojo */
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      transition: opacity 0.5s ease;
+    }
+
+    /* === NUEVO DISEÑO DE CARDS === */
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-top: 25px;
+    }
+    @media (max-width: 900px) {
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .desarrollo-card {
+      background: #f8f6fa;
+      border-radius: 18px;
+      padding: 24px 22px 18px 22px;
+      box-shadow: 0 2px 10px rgba(155,89,182,0.07);
+      display: flex;
+      flex-direction: column;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .2s, transform .2s;
+      min-height: 210px;
+      /* El color del borde izquierdo se ajusta por clase */
+      border-left: 10px solid var(--card-accent, #9B59B6);
+    }
+    .desarrollo-card:hover {
+      box-shadow: 0 8px 24px rgba(155,89,182,0.13);
+      transform: translateY(-4px) scale(1.01);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .card-header h3 {
+      font-size: 24px;
+      color: var(--card-accent, #7a3eb1);
+      font-weight: 900;
+      margin-bottom: 0;
+    }
+    .card-header .fecha {
+      font-size: 17px;
+      color: #444;
+      font-weight: 700;
+      margin-left: 0;
+      margin-top: 2px;
+    }
+    .card-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .card-body p {
+      margin: 0;
+      font-size: 15px;
+      color: #444;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dimension-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: flex-start;
+    }
+    .dimension-mini {
+      background: none;
+      border-radius: 6px;
+      padding: 0 6px;
+      font-size: 15px;
+      color: #7a3eb1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    .display-stars {
+      color: #f5b301;
+      font-size: 1.2rem;
+      margin-left: 8px;
+    }
+    .display-stars .inactive {
+      color: #e0e0e0;
+    }
+    .card-footer {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      border-top: none;
+      padding-top: 0;
+    }
+    .card-icon {
+      position: absolute;
+      top: 12px;
+      right: 18px;
+      font-size: 60px;
+      color: var(--primary-color);
+      opacity: 0.06;
+      z-index: 0;
+    }
+    .card-accent-excelente { --card-accent: #7a3eb1; } /* morado moderno */
+    .card-accent-muybueno { --card-accent: #5dade2; } /* azul suave */
+    .card-accent-bueno { --card-accent: #48c9b0; } /* verde agua */
+    .card-accent-regular { --card-accent: #f7ca18; } /* amarillo suave */
+    .card-accent-malo { --card-accent: #e74c3c; } /* rojo coral */
+    .card-accent-actual { background: #e5d5f5 !important; }
+    .badge-promedio {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      background: #fff;
+      color: #7a3eb1;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 16px;
+      padding: 4px 12px;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.08);
+      z-index: 2;
+      border: 2px solid var(--card-accent, #9B59B6);
+    }
+    /* --- ESTILOS DE PAGINACIÓN --- */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+      gap: 8px;
+    }
+    .pagination a, .pagination span {
+      color: #9B59B6;
+      padding: 8px 14px;
+      text-decoration: none;
+      transition: background-color .3s;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: white;
+    }
+    .pagination a:hover { background-color: #f1f1f1; }
+    .pagination .current { background-color: #9B59B6; color: white; border-color: #9B59B6; }
+    .pagination .disabled { color: #ccc; border-color: #ddd; background-color: #f8f9fa; }
+  </style>
+</head>
+<style>
+  /* Estilo personalizado para los mensajes de advertencia */
+  .mensaje-warning {
+    background-color: #e5d5f5; /* Un lavanda suave */
+    color: #5e3370; /* Texto morado oscuro */
+    border: 1px solid #c3a3e0;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  /* --- NUEVO: Estilo para el banner informativo --- */
+  .info-banner-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+    margin-bottom: 20px;
+  }
+
+  .info-banner {
+    max-width: 800px;
+    width: 100%;
+    background: linear-gradient(135deg, #f3e7ff, #e8d8f9);
+    color: #5e3370;
+    border: 1px solid #d1b3e0;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+    border-radius: 16px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .info-banner i {
+    font-size: 26px;
+    color: #7a3eb1;
+  }
+
+    /* Estilos para la selección múltiple */
+    .selection-checkbox {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      transform: scale(1.6);
+      z-index: 3;
+      cursor: pointer;
+    }
+    .desarrollo-card.selected {
+      box-shadow: 0 0 0 3px var(--primary-color);
+    }
+</style>
+<body>
+  {% include 'madre/navbar_madre.html' %}
+
+  <div class="tabla-registros">
+    <h1>
+        Desarrollo Infantil
+        {% if nino_filtrado %}
+            <br><small style="font-size: 18px; color: #555;">de {{ nino_filtrado.nombres }} {{ nino_filtrado.apellidos }}</small>
+        {% else %}
+            <br><small style="font-size: 18px; color: #555;">Seleccione un niño</small>
+        {% endif %}
+    </h1>
+    <div class="info-banner-container">
+      <div class="info-banner">
+        <i class="fas fa-info-circle"></i>
+        <span>El módulo de <b>Desarrollo Infantil</b> resume la información de los <b>seguimientos diarios</b>, permitiendo reflejar el <b>progreso mensual</b> del niño acorde a la planeación educativa.</span>
+      </div>
+    </div>
+    {% if messages %} 
+      {% for message in messages %}
+        <div class="mensaje-{{ message.tags }}" id="mensajeNotificacion">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+        
+    <div class="filtros-y-botones">
+      <form method="get" class="filtros-form">
+        {% if nino_id_filtro %}
+          <input type="hidden" name="nino" value="{{ nino_id_filtro }}">
+        {% endif %}
+        <label for="mes">Mes:</label>
+        <input type="month" id="mes" name="mes" value="{{ mes_filtro }}">
+        <button type="submit"><i class="fas fa-search"></i> Filtrar</button>
+        <a href="{% url 'desarrollo:listar_desarrollos' %}{% if nino_id_filtro %}?nino={{ nino_id_filtro }}{% endif %}" class="btn-volver" style="margin-left: 5px;">Limpiar Filtro</a>
+      </form>
+
+      <div id="action-buttons-container">
+        <button type="submit" form="bulk-delete-form" id="btn-eliminar-seleccionados" class="btn-rojo" style="display: none; margin-right: 10px;"><i class="fas fa-trash"></i> Eliminar Seleccionados</button>
+        <a href="{% url 'gestion_ninos' %}" class="btn-volver"><i class="fas fa-arrow-left"></i> Volver a Gestión</a>
+        <a href="{% url 'desarrollo:registrar_desarrollo' %}{% if nino_id_filtro %}?nino={{ nino_id_filtro }}{% endif %}" class="btn-agregar">
+          <i class="fas fa-plus"></i> Añadir Registro
+        </a>
+      </div>
+    </div>
+    
+    <!-- El formulario para eliminación masiva envuelve la grilla -->
+    <form method="post" action="{% url 'desarrollo:eliminar_desarrollos_seleccionados' %}" id="bulk-delete-form">
+        {% csrf_token %}
+        {% if nino_id_filtro %}
+            <input type="hidden" name="nino_id_filtro" value="{{ nino_id_filtro }}">
+        {% endif %}
+        
+        {% if desarrollos %}
+        <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; padding-left: 5px;">
+            <input type="checkbox" id="seleccionar-todo" style="transform: scale(1.4);">
+            <label for="seleccionar-todo" style="font-weight: bold; color: #5e3370; cursor: pointer;">Seleccionar / Deseleccionar Todo</label>
+        </div>
+        {% endif %}
+
+        <div class="card-grid">
+        {% for desarrollo in desarrollos %}
+        <div class="desarrollo-card {{ desarrollo.accent }}"
+            data-nino="{{ desarrollo.nino.nombres }} {{ desarrollo.nino.apellidos }}"
+            data-tutor="{{ desarrollo.nino.padre.usuario.nombres }} {{ desarrollo.nino.padre.usuario.apellidos }}"
+            data-fecha="{{ desarrollo.fecha_fin_mes|date:'Y-m-d' }}"
+            data-eval-cognitiva="{{ desarrollo.evaluacion_cognitiva|default_if_none:''|escapejs }}"
+            data-eval-comunicativa="{{ desarrollo.evaluacion_comunicativa|default_if_none:''|escapejs }}"
+            data-eval-socioafectiva="{{ desarrollo.evaluacion_socio_afectiva|default_if_none:''|escapejs }}"
+            data-eval-corporal="{{ desarrollo.evaluacion_corporal|default_if_none:''|escapejs }}"
+            data-fortalezas="{{ desarrollo.fortalezas_mes|default_if_none:''|escapejs }}"
+            data-mejorar="{{ desarrollo.aspectos_a_mejorar|default_if_none:''|escapejs }}"
+            data-alertas="{{ desarrollo.alertas_mes|default_if_none:''|escapejs }}"
+            data-conclusion="{{ desarrollo.conclusion_general|default_if_none:''|escapejs }}"
+            data-novedades="{{ desarrollo.novedades_mes|default_if_none:''|escapejs }}"
+        >
+            <input type="checkbox" name="desarrollo_ids" value="{{ desarrollo.id }}" class="selection-checkbox">
+            <span class="badge-promedio">Logro: {{ desarrollo.logro_mes|default:'N/A' }}</span>
+            <i class="fas fa-seedling card-icon" style="z-index: -1;"></i>
+            <div class="card-header">
+            <h3>{{ desarrollo.nino.nombres }} {{ desarrollo.nino.apellidos }}</h3>
+            <span class="fecha">{{ desarrollo.fecha_fin_mes|date:"F Y" }}</span>
+            </div>
+            <div class="card-body">
+            <p><i class="fas fa-chart-line"></i> <strong>Tendencia:</strong> {{ desarrollo.get_tendencia_valoracion_display|default:'-' }}</p>
+            <p><i class="fas fa-tasks"></i> <strong>Participación:</strong> {{ desarrollo.participacion_frecuente|default:'-' }}</p>
+            <p><i class="fas fa-calendar-check"></i> <strong>Asistencia:</strong> {{ desarrollo.porcentaje_asistencia|default:'N/A' }}%</p>
+            <p><i class="fas fa-smile"></i> <strong>Comportamiento:</strong> {{ desarrollo.comportamiento_frecuente|default:'-' }}</p>
+            </div>
+            <div class="card-footer acciones">
+            <button type="button" class="btn-accion btn-verde ver-detalles" title="Ver Detalles"><i class="fas fa-eye"></i></button>
+            <!-- FIX: El botón de editar ahora apunta a la vista unificada 'registrar_desarrollo' -->
+            <a href="{% url 'desarrollo:registrar_desarrollo' %}?nino={{ desarrollo.nino.id }}&mes={{ desarrollo.fecha_fin_mes|date:'Y-m' }}" 
+                class="btn-accion btn-azul" 
+                title="Editar">
+                <i class="fas fa-pen"></i></a>
+            <a href="{% url 'desarrollo:eliminar_desarrollo' desarrollo.id %}" class="btn-accion btn-rojo" title="Eliminar" onclick="return confirm('¿Estás segura de que deseas eliminar este registro? Esta acción no se puede deshacer.');"><i class="fas fa-trash"></i></a>
+            <a href="{% url 'desarrollo:generar_reporte_pdf' desarrollo.nino.id %}?tipo_reporte=desarrollo&fecha_inicio={{ desarrollo.fecha_fin_mes|date:'Y-m-01' }}&fecha_fin={{ desarrollo.fecha_fin_mes|date:'Y-m-d' }}" target="_blank" class="btn-accion btn-verde" title="PDF" style="background:#9B59B6; color:white;">
+                <i class="fas fa-file-pdf"></i>
+            </a>
+            <a href="{% url 'desarrollo:generar_certificado_desarrollo' desarrollo.id %}" target="_blank" class="btn-accion btn-verde" title="Certificado" style="background:#17a2b8; color:white;">
+                <i class="fas fa-certificate"></i>
+            </a>
+            </div>
+        </div>
+        {% empty %}
+            <p style="grid-column: 1 / -1; text-align: center; color: #777; font-size: 18px; padding: 40px 0;">No hay registros de desarrollo que coincidan con los filtros.</p>
+        {% endfor %}
+        </div>
+    </form>
+
+    <!-- Controles de Paginación -->
+    <div class="pagination">
+      {% if desarrollos.has_previous %}
+        <a href="?page=1{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&laquo; Primera</a>
+        <a href="?page={{ desarrollos.previous_page_number }}{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Anterior</a>
+      {% else %}
+        <span class="disabled">&laquo; Primera</span>
+        <span class="disabled">Anterior</span>
+      {% endif %}
+
+      <span class="current">
+        Página {{ desarrollos.number }} de {{ desarrollos.paginator.num_pages }}.
+      </span>
+
+      {% if desarrollos.has_next %}
+        <a href="?page={{ desarrollos.next_page_number }}{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Siguiente</a>
+        <a href="?page={{ desarrollos.paginator.num_pages }}{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Última &raquo;</a>
+      {% else %}
+        <span class="disabled">Siguiente</span>
+        <span class="disabled">Última &raquo;</span>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Modal Detalles -->
+  <div id="modalDetalles" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar-modal">&times;</span>
+      <h2 style="text-align: center;">Detalles del Desarrollo Mensual</h2>
+      <div class="modal-grid">
+        <div class="modal-item"><strong>Niño/a:</strong> <span id="modal-nino"></span></div>
+        <div class="modal-item"><strong>Mes Evaluado:</strong> <span id="modal-fecha"></span></div>
+      </div>
+      <hr>
+      <h3 style="color: #7a3eb1; margin-top: 20px; margin-bottom: 15px;">Evaluación por Dimensiones</h3>
+      <div class="modal-grid">
+        <div class="modal-item"><strong>Cognitiva:</strong> <span id="modal-cognitiva"></span></div>
+        <div class="modal-item"><strong>Comunicativa:</strong> <span id="modal-comunicativa"></span></div>
+        <div class="modal-item"><strong>Socio-Afectiva:</strong> <span id="modal-socioafectiva"></span></div>
+        <div class="modal-item"><strong>Corporal:</strong> <span id="modal-corporal"></span></div>
+      </div>
+      <hr>
+      <div class="modal-grid">
+        <div class="modal-item full-width">
+          <strong>Fortalezas del Mes:</strong>
+          <blockquote id="modal-fortalezas"></blockquote>
+        </div>
+        <div class="modal-item full-width">
+          <strong>Aspectos a Mejorar:</strong>
+          <blockquote id="modal-mejorar"></blockquote>
+        </div>
+        <div class="modal-item full-width">
+          <strong>Alertas o Novedades:</strong>
+          <blockquote id="modal-alertas"></blockquote>
+        </div>
+        <div class="modal-item full-width">
+          <strong>Vista previa de novedades:</strong>
+          <div id="modal-novedades" style="background:#f8f6ff; border-radius:8px; border:1px solid #e5d5f5; padding:10px 14px; margin-top:6px; font-size:15px; color:#555;"></div>
+        </div>
+        <div class="modal-item full-width">
+          <strong>Conclusión General:</strong>
+          <blockquote id="modal-conclusion"></blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modalDetalles');
+    const cerrarBoton = document.querySelector('.cerrar-modal');
+
+    function cerrarModal() {
+      modal.style.display = 'none';
+    }
+
+    cerrarBoton.onclick = cerrarModal;
+
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        cerrarModal();
+      }
+    };
+
+    document.querySelectorAll('.ver-detalles').forEach(button => {
+      button.addEventListener('click', function() {
+        const card = this.closest('.desarrollo-card');
+        function mostrarDimension(valor) {
+          if (!valor || valor.trim() === '' || valor.trim().toLowerCase() === 'no registrado') {
+            return 'Sin información registrada';
+          }
+          // Decodifica secuencias Unicode (\uXXXX)
+          valor = valor.replace(/\\u([0-9a-fA-F]{4})/g, function(match, grp) {
+            return String.fromCharCode(parseInt(grp, 16));
+          });
+          // Reemplaza saltos de línea (\r\n, \n, \r) por <br>
+          valor = valor.replace(/\r\n|\n|\r/g, '<br>');
+          // Reemplaza comillas escapadas
+          valor = valor.replace(/\\'/g, "'").replace(/\\"/g, '"');
+          return valor;
+        }
+        document.getElementById('modal-nino').textContent = card.dataset.nino;
+        document.getElementById('modal-fecha').textContent = card.dataset.fecha;
+        document.getElementById('modal-cognitiva').innerHTML = mostrarDimension(card.dataset.evalCognitiva);
+        document.getElementById('modal-comunicativa').innerHTML = mostrarDimension(card.dataset.evalComunicativa);
+        document.getElementById('modal-socioafectiva').innerHTML = mostrarDimension(card.dataset.evalSocioafectiva);
+        document.getElementById('modal-corporal').innerHTML = mostrarDimension(card.dataset.evalCorporal);
+        document.getElementById('modal-fortalezas').innerHTML = mostrarDimension(card.dataset.fortalezas);
+        document.getElementById('modal-mejorar').innerHTML = mostrarDimension(card.dataset.mejorar);
+        document.getElementById('modal-alertas').innerHTML = mostrarDimension(card.dataset.alertas);
+        document.getElementById('modal-conclusion').innerHTML = mostrarDimension(card.dataset.conclusion);
+        document.getElementById('modal-novedades').innerHTML = (card.dataset.novedades && card.dataset.novedades !== 'undefined') ? mostrarDimension(card.dataset.novedades) : '<span style="color:#888;">No hay novedades registradas este mes.</span>';
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Ocultar el mensaje de éxito después de 5 segundos
+    const mensajeNotificacion = document.getElementById('mensajeNotificacion');
+    if (mensajeNotificacion) {
+      setTimeout(() => {
+        mensajeNotificacion.style.opacity = '0';
+        setTimeout(() => { mensajeNotificacion.style.display = 'none'; }, 500);
+      }, 5000);
+    }
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectAllCheckbox = document.getElementById('seleccionar-todo');
+      const itemCheckboxes = document.querySelectorAll('.selection-checkbox');
+      const deleteButton = document.getElementById('btn-eliminar-seleccionados');
+      const bulkDeleteForm = document.getElementById('bulk-delete-form');
+
+      function updateDeleteButtonVisibility() {
+        const anyChecked = Array.from(itemCheckboxes).some(cb => cb.checked);
+        deleteButton.style.display = anyChecked ? 'inline-flex' : 'none';
+      }
+
+      if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+          itemCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+            const card = checkbox.closest('.desarrollo-card');
+            if (card) {
+              card.classList.toggle('selected', this.checked);
+            }
+          });
+          updateDeleteButtonVisibility();
+        });
+      }
+
+      itemCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const card = this.closest('.desarrollo-card');
+          if (card) {
+            card.classList.toggle('selected', this.checked);
+          }
+          if (!this.checked) {
+            selectAllCheckbox.checked = false;
+          }
+          updateDeleteButtonVisibility();
+        });
+      });
+
+      if (bulkDeleteForm) {
+        bulkDeleteForm.addEventListener('submit', function(e) {
+          if (!confirm('¿Estás segura de que deseas eliminar todos los registros seleccionados? Esta acción no se puede deshacer.')) {
+            e.preventDefault();
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

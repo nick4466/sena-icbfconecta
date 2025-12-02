@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+    {% load static %}
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Helvetica', Arial, sans-serif;
+      margin: 40px;
+      color: #333;
+      background: #ffffff;
+      line-height: 1.4;
+    }
+
+    /* ENCABEZADO */
+    .header {
+      text-align: center;
+      border-bottom: 4px solid #6A1B9A;
+      padding-bottom: 20px;
+      margin-bottom: 35px;
+    }
+    .header img {
+      height: 85px;
+      margin-bottom: 8px;
+    }
+    .header h1 {
+      font-size: 24pt;
+      color: #6A1B9A;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .header p {
+      font-size: 11pt;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    /* BLOQUES DE INFO */
+    .container {
+      margin-top: 20px;
+    }
+
+    .row {
+      margin: 8px 0;
+      padding: 10px 12px;
+      background: #f6f2fa;
+      border-left: 4px solid #6A1B9A;
+      border-radius: 5px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #4A148C;
+      font-size: 12pt;
+      display: block;
+    }
+
+    .text {
+      font-size: 12pt;
+      margin-top: 2px;
+    }
+
+    /* OBSERVACIONES */
+    .observaciones {
+      margin-top: 25px;
+      padding: 15px;
+      background: #faf7ff;
+      border: 1.5px solid #d3c4e3;
+      border-radius: 8px;
+    }
+    .observaciones-title {
+      font-weight: bold;
+      color: #4A148C;
+      margin-bottom: 8px;
+      font-size: 13pt;
+    }
+
+    /* FOOTER */
+    .footer {
+      margin-top: 45px;
+      text-align: center;
+      font-size: 10pt;
+      color: #777;
+      padding-top: 10px;
+      border-top: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Logo y título -->
+  <div class="header">
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo ICBF Conecta">
+    <h1>Reporte de Novedad</h1>
+    <p>Generado automáticamente por ICBF Conecta</p>
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+      <span class="label">Niño:</span>
+      <span class="text">{{ novedad.nino.nombres }} {{ novedad.nino.apellidos }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Fecha:</span>
+      <span class="text">{{ novedad.fecha|date:"d/m/Y" }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Clase:</span>
+      <span class="text">{{ novedad.clase }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Tipo:</span>
+      <span class="text">{{ novedad.tipo }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Docente:</span>
+      <span class="text">{{ novedad.docente }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Descripción:</span>
+      <span class="text">{{ novedad.descripcion }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Causa:</span>
+      <span class="text">{{ novedad.causa }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Disposición:</span>
+      <span class="text">{{ novedad.disposicion }}</span>
+    </div>
+
+    <div class="row">
+      <span class="label">Acuerdos:</span>
+      <span class="text">{{ novedad.acuerdos }}</span>
+    </div>
+
+    <div class="observaciones">
+      <div class="observaciones-title">Observaciones:</div>
+      {{ novedad.observaciones }}
+    </div>
+
+    <div class="row" style="margin-top: 20px;">
+      <span class="label">Soporte PDF:</span>
+      <span class="text">
+        {% if novedad.archivo_pdf %}
+          Adjuntado
+        {% else %}
+          No se adjuntó archivo
+        {% endif %}
+      </span>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    📄 Documento oficial de seguimiento de novedades – ICBF Conecta
+  </div>
+
+</body>
+</html>

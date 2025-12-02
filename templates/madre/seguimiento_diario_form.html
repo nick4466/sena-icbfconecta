@@ -1,0 +1,503 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Seguimiento Diario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+}
+
+
+
+    .main-title {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #7a3eb1;
+      background-color: #f3c4ffb3;
+      margin: 20px auto;
+      width: 80%;
+      border-radius: 10px;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 22px;
+      color: #9B59B6;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #5e3370;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 14px;
+      padding: 30px;
+      backdrop-filter: blur(3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      border-left: 8px solid #9B59B6;
+    }
+
+    .card h2 {
+      color: #9B59B6;
+      margin-bottom: 25px;
+      font-size: 27px;
+      text-align: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    input[type="date"] {
+      width: 80%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, {
+      border-color: #9B59B6;
+      outline: none;
+      background-color: #f0f8ff;
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      transition: border-color 0.3s ease;
+    }
+
+    select:focus, textarea:focus {
+      border-color: #9B59B6;
+      outline: none;
+      background-color: #f0f8ff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+/* Estilo para el campo "Planeación del Día" */
+input[type="text"][value="{{ planeacion.nombre_experiencia|default:'No hay planeación' }}"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Estilo para el campo "Niño/a a registrar seguimiento" */
+input[type="text"][value="{{ nino_preseleccionado.nombres }} {{ nino_preseleccionado.apellidos }}"], 
+select[name="nino"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Estilo cuando el campo es enfocado (focus) */
+input[type="text"]:focus, select:focus {
+  border-color: #9B59B6; /* Color morado que coincide con el resto del diseño */
+  outline: none;
+  background-color: #f0f8ff; /* Fondo suave */
+}
+
+    .botones {
+      display: block;
+      width: 100%;
+      background-color: #9B59B6;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      align-self: center;
+      margin-top: 20px;
+    }
+
+    .botones:hover {
+      background-color: #8e44ad;
+    }
+
+    .mensaje-exito {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .error-container {
+      color: #721c24;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .info-container {
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border: 1px solid #bee5eb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .required-star {
+      color: #e74c3c;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+    
+    .dimension-block {
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-left: 5px solid #a569bd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Estilos para las estrellas */
+    .rating-stars {
+      display: flex;
+      flex-direction: row-reverse; /* Para que el hover funcione de derecha a izquierda */
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .rating-stars input[type="radio"] {
+      display: none;
+    }
+    .rating-stars label {
+      font-size: 2.5rem;
+      color: #ddd;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .rating-stars input[type="radio"]:checked ~ label,
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label {
+      color: #f5b301;
+    }
+    /* Para que al quitar el hover, las estrellas seleccionadas permanezcan coloreadas */
+    .rating-stars input[type="radio"]:checked ~ label:hover,
+    .rating-stars input[type="radio"]:checked ~ label:hover ~ label {
+      color: #f5b301;
+    }
+    .nota-valoracion {
+      background-color: #f0e6f5; /* Un lila muy claro */
+      border: 1px solid #d1b3e6;
+      border-left: 5px solid #9B59B6; /* Borde morado principal */
+      padding: 15px;
+      margin-top: 25px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #5e3370;
+    }
+    .nota-valoracion p {
+      margin: 0 0 10px 0;
+    }
+    .nota-valoracion ul {
+      margin: 0 0 5px 20px;
+      padding: 0;
+    }
+    .nota-valoracion li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  {% include 'madre/navbar_madre.html' %}
+
+  <div class="main-title">ICBF - CONECTA | {{ titulo_form }}</div>
+
+  <div class="contenedor">
+    {% if error %}
+    <div class="error-container">{{ error }}</div>
+    {% endif %}
+    {% if info %}
+    <div class="info-container">{{ info }}</div>
+    {% endif %}
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 style="margin: 0;"><i class="fas fa-clipboard-list"></i> Registrar Seguimiento Diario</h2>
+        <a href="{% url 'desarrollo:listar_seguimientos' %}{% if nino_preseleccionado.id %}?nino={{ nino_preseleccionado.id }}{% elif request.GET.nino %}?nino={{ request.GET.nino }}{% endif %}" class="botones" style="margin: 0; font-weight: bold; text-decoration: none; width: auto; padding: 10px 20px; font-size: 16px; background-color: #6c757d;">
+          <i class="fas fa-arrow-left"></i> Volver al listado
+        </a>
+      </div>
+
+      <p style="text-align: center; color: #555; margin-top: -15px; margin-bottom: 25px;">Los campos con <span class="required-star">*</span> son obligatorios.</p>
+
+      <form method="post" action="{% url 'desarrollo:registrar_seguimiento' %}" id="seguimientoDiarioForm">
+          {% csrf_token %}
+          <input type="hidden" name="fecha" value="{{ fecha_filtro }}">
+
+          <div class="form-grid">
+          <div class="form-group">
+            <h4>Fecha del Seguimiento<span class="required-star">*</span></h4>
+            <input type="date" id="fechaSelector" value="{{ fecha_filtro }}">
+          </div>
+          <div class="form-group">
+            <h4>Planeación del Día</h4>
+            <input type="text" value="{{ planeacion.nombre_experiencia|default:'No hay planeación' }}" disabled>
+          </div>
+        </div>
+
+        {% if paso == 'registrar_datos' %}
+          {% if nino_preseleccionado %}
+            <div class="form-group">
+              <h4>Niño/a a registrar seguimiento<span class="required-star">*</span></h4>
+              <input type="text" value="{{ nino_preseleccionado.nombres }} {{ nino_preseleccionado.apellidos }}" disabled>
+              <input type="hidden" name="nino" value="{{ nino_preseleccionado.id }}">
+            </div>
+          {% else %}
+            <div class="form-group">
+              <h4>Niño/a a registrar seguimiento<span class="required-star">*</span></h4>
+              <select name="nino" required>
+                <option value="">-- Seleccionar niño que asistió --</option>
+                {% for nino in ninos_para_seleccionar %}
+                  <option value="{{ nino.id }}">{{ nino.nombres }} {{ nino.apellidos }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+
+          <!-- Bloques dinámicos por dimensión -->
+          {% for dimension in dimensiones_planeacion %}
+            <div class="dimension-block">
+                <h4>Dimensión: {{ dimension.nombre }}</h4>
+                <input type="hidden" name="dimension_id" value="{{ dimension.id }}">
+                <div class="form-group">
+                    <label for="desempeno_{{ dimension.id }}">Desempeño<span class="required-star">*</span></label>
+                    <select name="desempeno_{{ dimension.id }}" id="desempeno_{{ dimension.id }}" class="desempeno-select" required>
+                        <option value="">-- Seleccionar desempeño --</option>
+                        <option value="alto">Alto</option>
+                        <option value="adecuado">Adecuado</option>
+                        <option value="proceso">En Proceso</option>
+                        <option value="bajo">Bajo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="observacion_{{ dimension.id }}">Observación (Opcional)</label>
+                    <textarea name="observacion_{{ dimension.id }}" id="observacion_{{ dimension.id }}" placeholder="Observaciones específicas de esta dimensión"></textarea>
+                </div>
+            </div>
+          {% endfor %}
+
+          <hr style="margin: 30px 0;">
+
+          <h4>Campos Generales del Seguimiento</h4>
+
+            <div class="form-group">
+                <label for="comportamiento_general">Comportamiento general del niño<span class="required-star">*</span></label>
+                <select name="comportamiento_general" id="comportamiento_general" required>
+                    <option value="">-- Seleccionar comportamiento --</option>
+                    {% for key, value in comportamiento_choices %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estado_emocional">Estado emocional del niño<span class="required-star">*</span></label>
+                <select name="estado_emocional" id="estado_emocional" required>
+                    <option value="">-- Seleccionar estado emocional --</option>
+                    {% for key, value in estado_emocional_choices %}
+                        <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+          <div class="form-group">
+            <label for="observaciones">Observaciones del educador (Opcional)</label>
+            <textarea name="observaciones" id="id_observaciones" placeholder="Observaciones adicionales (opcional)"></textarea>
+            <div id="observacion_relevante_container" style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                <input type="checkbox" name="observacion_relevante" id="id_observacion_relevante" value="true">
+                <label for="id_observacion_relevante">¿Esta observación es relevante para el desarrollo del niño?</label>
+            </div>
+          </div>
+
+          <div class="nota-valoracion">
+            <p><strong>Nota sobre la valoración en estrellas:</strong></p>
+            <ul>
+              <li>Si algún desempeño es <strong>Bajo</strong>, el máximo será <strong>3 estrellas</strong>.</li>
+              <li>Si el comportamiento es <strong>negativo</strong> (ej. impulsivo, aislado), el máximo será <strong>4 estrellas</strong>.</li>
+              <li>Con buenos desempeños y comportamiento positivo, <strong>no se permitirá menos de 4 estrellas</strong>.</li>
+            </ul>
+          </div>
+
+          <div class="form-group">
+            <h4>Valoración del día<span class="required-star">*</span></h4>
+            <div class="rating-stars">
+              <input type="radio" id="valoracion-5" name="valoracion" value="5" required><label for="valoracion-5" title="Excelente">★</label>
+              <input type="radio" id="valoracion-4" name="valoracion" value="4"><label for="valoracion-4">★</label>
+              <input type="radio" id="valoracion-3" name="valoracion" value="3"><label for="valoracion-3">★</label>
+              <input type="radio" id="valoracion-2" name="valoracion" value="2"><label for="valoracion-2">★</label>
+              <input type="radio" id="valoracion-1" name="valoracion" value="1"><label for="valoracion-1">★</label>
+            </div>
+          </div>
+
+          <button class="botones" type="submit"><i class="fas fa-save"></i> Guardar Seguimiento</button>
+        {% else %}
+          <!-- No se muestra el formulario si no hay niños disponibles -->
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById('seguimientoDiarioForm').addEventListener('submit', function(event) {
+      const paso = "{{ paso }}";
+      if (paso !== 'registrar_datos') { return; }
+
+      let isValid = true;
+      let firstErrorMessage = "";
+
+      // --- Recopilación de datos del formulario ---
+      const desempenoSelects = Array.from(document.querySelectorAll('.desempeno-select'));
+      const comportamiento = document.getElementById('comportamiento_general').value;
+      const valoracionChecked = document.querySelector('input[name="valoracion"]:checked');
+      const valoracion = valoracionChecked ? parseInt(valoracionChecked.value, 10) : 0;
+
+      const hayDesempenoBajo = desempenoSelects.some(s => s.value === 'bajo');
+      const todosDesempenosBuenos = desempenoSelects.every(s => ['alto', 'adecuado'].includes(s.value));
+      const esComportamientoNegativo = ['aislado', 'impulsivo', 'inquieto'].includes(comportamiento);
+      const esComportamientoPositivo = ['participativo', 'colaborador', 'tranquilo'].includes(comportamiento); // Asumiendo 'tranquilo' como positivo/neutral
+
+      // --- Lógica de validación unificada ---
+
+      // 1. Validaciones de máximo permitido
+      if (hayDesempenoBajo && valoracion > 3) {
+        isValid = false;
+        firstErrorMessage = "Si alguna dimensión tiene desempeño 'Bajo', la valoración máxima permitida es de 3 estrellas.";
+      } else if (esComportamientoNegativo && valoracion > 4) {
+        isValid = false;
+        firstErrorMessage = "Si el comportamiento es negativo (Aislado, Impulsivo, Inquieto), la valoración máxima permitida es de 4 estrellas.";
+      }
+
+      // 2. Validaciones de mínimo permitido
+      if (todosDesempenosBuenos && esComportamientoPositivo && valoracion < 4) { // Mínimo 4 estrellas
+        isValid = false;
+        firstErrorMessage = "Con desempeños 'Altos' o 'Adecuados' y un comportamiento positivo, la valoración mínima debe ser de 4 estrellas.";
+      } else if (todosDesempenosBuenos && !esComportamientoPositivo && !esComportamientoNegativo && valoracion < 2) { // Comportamiento neutral
+        isValid = false;
+        firstErrorMessage = "Con buenos desempeños y un comportamiento neutral, la valoración mínima es de 2 estrellas.";
+      }
+
+      // 3. Validación de campos obligatorios (si no hay otro error)
+      if (isValid) {
+        if (desempenoSelects.some(s => s.value === "")) firstErrorMessage = "Debes seleccionar un desempeño para todas las dimensiones.";
+        else if (comportamiento === "") firstErrorMessage = "Debes seleccionar el comportamiento general del niño.";
+        else if (document.getElementById('estado_emocional').value === "") firstErrorMessage = "Debes seleccionar el estado emocional del niño.";
+        else if (valoracion === 0) firstErrorMessage = "Debes seleccionar una valoración del día (estrellas).";
+        
+        if (firstErrorMessage) isValid = false;
+      }
+
+      if (!isValid) {
+        event.preventDefault();
+        alert(firstErrorMessage);
+      }
+    });
+
+    document.getElementById('fechaSelector').addEventListener('change', function() {
+      const nuevaFecha = this.value;
+      if (nuevaFecha) {
+        const url = new URL(window.location.href);
+        const ninoId = url.searchParams.get('nino');
+
+        url.search = ''; // Limpiamos para reconstruir
+        url.searchParams.set('fecha', nuevaFecha);
+        
+        if (ninoId) {
+          url.searchParams.set('nino', ninoId);
+        }
+        window.location.href = url.toString();
+      }
+    });
+
+    // --- Lógica para mostrar/ocultar el checkbox de observación relevante ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const observacionesTextarea = document.getElementById('id_observaciones');
+        const observacionRelevanteContainer = document.getElementById('observacion_relevante_container');
+
+        if (!observacionesTextarea || !observacionRelevanteContainer) {
+            console.error("No se encontraron los campos de observaciones para la lógica de visibilidad.");
+            return;
+        }
+
+        // Función para verificar y actualizar la visibilidad
+        function toggleRelevanteCheckbox() {
+            if (observacionesTextarea.value.trim() !== '') {
+                observacionRelevanteContainer.style.display = 'flex'; // Muestra el campo
+            } else {
+                observacionRelevanteContainer.style.display = 'none'; // Oculta el campo
+            }
+        }
+
+        // Llama a la función al cargar la página para establecer el estado inicial
+        toggleRelevanteCheckbox();
+
+        // Añade un listener para que se ejecute cada vez que el usuario escribe
+        observacionesTextarea.addEventListener('input', toggleRelevanteCheckbox);
+    });
+  </script>
+
+</body>
+</html>

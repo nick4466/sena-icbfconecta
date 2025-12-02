@@ -1,0 +1,349 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Correos</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <style>
+    /* ======= ESTILO BASE TOMADO DEL DISEÑO QUE PROVISTE ======= */
+
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 15px 30px;
+      border-bottom: 2px solid #e5d5f5;
+      backdrop-filter: blur(4px);
+      flex-wrap: wrap;
+    }
+    header img { height: 60px; }
+
+    nav ul { display: flex; list-style: none; gap: 20px; }
+    nav ul li a, nav ul li button {
+      text-decoration: none; color: #9B59B6; font-weight: bold; font-size: 16px;
+      padding: 8px 12px; border-radius: 6px; background: none;
+      border: none; cursor: pointer;
+      transition: background-color .3s ease;
+    }
+    nav ul li a:hover, nav ul li button:hover { background-color: #f3c1e5; }
+
+    /* ======= CONTENEDOR PRINCIPAL ======= */
+    .tabla-registros {
+      max-width: 1100px;
+      margin: 40px auto;
+      background-color: rgba(255,255,255,0.9);
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      color: #7a3eb1;
+      margin-bottom: 25px;
+    }
+
+    .filtros-y-botones {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .filtros-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .filtros-form input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .filtros-form button {
+      background-color: #9B59B6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-vaciar {
+      background-color: #dc3545 !important;
+      color: white;
+      padding: 9px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ===== CARDS PARA LOS CORREOS ===== */
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 30px;
+    }
+
+    @media(max-width: 900px){
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    .correo-card {
+      background: #f8f6fa;
+      padding: 22px;
+      border-radius: 16px;
+      box-shadow: 0 3px 10px rgba(155,89,182,0.12);
+      position: relative;
+      border-left: 10px solid #9B59B6;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .correo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(155,89,182,0.18);
+    }
+
+    .correo-titulo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #7a3eb1;
+      margin: 0 0 6px 0;
+    }
+
+    .correo-fecha {
+      font-size: 15px;
+      color: #555;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .correo-adjuntos,
+    .correo-estado {
+      margin: 6px 0;
+      font-size: 15px;
+      color: #444;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .btn-accion {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: .2s;
+    }
+
+    .btn-accion:hover {
+      transform: scale(1.08);
+    }
+
+    .btn-ver { background: #28a745; color: white; }
+    .btn-eliminar { background: #dc3545; color: white; }
+    .btn-nuevo {
+      background: #9B59B6;
+      padding: 10px 18px;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 30px;
+      border-radius: 8px;
+    }
+    .btn-nuevo:hover { background: #8e44ad; }
+
+    /* ========== MODAL ========== */
+    .modal {
+      display: none;
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-contenido {
+      background: white;
+      width: 600px;
+      max-width: 90%;
+      padding: 30px;
+      border-radius: 14px;
+    }
+
+    .cerrar-modal {
+      float: right; cursor: pointer; font-size: 24px;
+      color: #777; font-weight: bold;
+    }
+
+    .cerrar-modal:hover { color: black; }
+
+    .modal-contenido h2 {
+      color: #7a3eb1;
+      margin-top: 0;
+    }
+
+  </style>
+</head>
+
+<body>
+
+{% include 'madre/navbar_madre.html' %}
+
+<div class="tabla-registros">
+
+  <h1>Historial de Correos</h1>
+
+  <div class="filtros-y-botones">
+    <form method="GET" class="filtros-form">
+      <input type="month" name="mes" value="{{ request.GET.mes }}">
+
+      <button><i class="fas fa-filter"></i> Filtrar</button>
+      <a href="?" title="Limpiar filtros" style="margin-left:6px;padding:8px 10px;border-radius:6px;background:#eee;color:#444;text-decoration:none;">Limpiar</a>
+    </form>
+
+    <form method="POST" action="{% url 'correos:vaciar_historial' %}"
+          onsubmit="return confirm('¿Vaciar historial?');">
+      {% csrf_token %}
+      <button class="btn-vaciar"><i class="fas fa-trash"></i> Vaciar historial</button>
+    </form>
+  </div>
+
+  <div class="card-grid">
+
+    {% for log in logs %}
+        <div class="correo-card"
+          data-asunto="{{ log.asunto }}"
+          data-fecha="{{ log.fecha_envio|date:'d/m/Y H:i' }}"
+          data-cuerpo="{{ log.cuerpo|escapejs }}"
+          data-destinatarios="{{ log.lista_destinatarios|join:'||' }}"
+        >
+
+      <p class="correo-titulo">{{ log.asunto }}</p>
+      <p class="correo-fecha"><i class="fas fa-calendar"></i> {{ log.fecha_envio|date:"d/m/Y H:i" }}</p>
+
+      <p class="correo-adjuntos">
+        <i class="fas fa-paperclip"></i>
+        {% if log.adjuntos.exists %}
+          {% for adj in log.adjuntos.all %}
+            <a href="{{ adj.archivo.url }}" target="_blank">{{ adj.nombre_original }}</a><br>
+          {% endfor %}
+        {% else %}
+          Sin adjuntos
+        {% endif %}
+      </p>
+
+      <p class="correo-estado">
+        {% if log.enviado_con_exito %}
+          <span style="color:green;font-weight:bold;">✔ Enviado</span>
+        {% else %}
+          <span style="color:red;font-weight:bold;">✖ Error</span>
+        {% endif %}
+      </p>
+
+      <div class="acciones">
+        <button class="btn-accion btn-ver ver-detalle-btn"><i class="fas fa-eye"></i> Ver</button>
+
+        <form method="POST" action="{% url 'correos:eliminar_log' log.id %}"
+              onsubmit="return confirm('¿Eliminar registro?');">
+          {% csrf_token %}
+          <button class="btn-accion btn-eliminar"><i class="fas fa-trash"></i></button>
+        </form>
+      </div>
+
+    </div>
+    {% empty %}
+      <p style="grid-column:1/-1;text-align:center;color:#777;">No hay registros.</p>
+    {% endfor %}
+
+  </div>
+
+  <a href="{% url 'correos:enviar' %}" class="btn-nuevo">
+    <i class="fas fa-paper-plane"></i> Enviar nuevo correo
+  </a>
+
+</div>
+
+<!-- ============== MODAL ============== -->
+<div id="modalDetalles" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar-modal">&times;</span>
+    <h2>Detalle del Correo</h2>
+
+    <p><strong>Asunto:</strong> <span id="md-asunto"></span></p>
+    <p><strong>Fecha:</strong> <span id="md-fecha"></span></p>
+    <p><strong>Destinatarios:</strong></p>
+    <ul id="md-destinatarios"></ul>
+    <p><strong>Cuerpo:</strong></p>
+    <p id="md-cuerpo"></p>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById("modalDetalles");
+  const cerrarBtn = document.querySelector(".cerrar-modal");
+
+  cerrarBtn.onclick = () => modal.style.display = "none";
+  window.onclick = e => { if(e.target === modal) modal.style.display = "none"; };
+
+  document.querySelectorAll(".ver-detalle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".correo-card");
+
+      document.getElementById("md-asunto").textContent = card.dataset.asunto;
+      document.getElementById("md-fecha").textContent = card.dataset.fecha;
+      document.getElementById("md-cuerpo").textContent = card.dataset.cuerpo;
+
+      const destinatariosRaw = card.dataset.destinatarios || '';
+      const destinatarios = destinatariosRaw ? destinatariosRaw.split('||') : [];
+      const ul = document.getElementById("md-destinatarios");
+      ul.innerHTML = "";
+      destinatarios.forEach(d => {
+        let li = document.createElement("li");
+        li.textContent = d;
+        ul.appendChild(li);
+      });
+
+      modal.style.display = "flex";
+    });
+  });
+</script>
+
+</body>
+</html>

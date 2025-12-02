@@ -1,0 +1,39 @@
+{% load static %}
+<div class="borde2"></div>
+<header class="main-header">
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo ICBF">
+
+    <nav>
+      <ul>
+        <li><a href="{% url 'padre_dashboard' %}"><i class="fas fa-home"></i> Inicio</a></li>
+        <li><a href="{% url 'calendario_padres' %}"><i class="fas fa-calendar"></i> Calendario</a></li>
+
+        <!-- Menú de usuario -->
+        <li class="dropdown user-menu-dropdown">
+          <a href="#" class="user-menu-button">
+            <span class="navbar-user-name">{{ user.nombres }}</span>
+            <i class="fas fa-user-circle" style="font-size: 24px;"></i>
+          </a>
+          <div class="dropdown-content user-menu-content">
+            <!-- Información del usuario en el menú -->
+            <div class="user-info">
+              <span class="user-name">{{ user.get_full_name }}</span>
+            </div>
+
+            <a href="{% url 'editar_perfil' %}">
+              <i class="fa-solid fa-user-pen"></i> Editar Perfil
+            </a>
+            <a href="{% url 'cambiar_contrasena' %}">
+              <i class="fa-solid fa-key"></i> Cambiar Contraseña
+            </a>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+              </button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </nav>
+</header>

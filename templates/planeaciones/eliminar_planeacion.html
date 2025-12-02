@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Eliminar Planeación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+}
+
+      
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li a, nav ul li button {
+            text-decoration: none;
+            color: #9B59B6;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        nav ul li a:hover, nav ul li button:hover { background-color: #f3c1e5; }
+     
+     /* Estilos para el menú desplegable */
+    nav ul .dropdown { position: relative; }
+    nav ul .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.98);
+      min-width: 200px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 8px;
+      padding: 8px 0;
+    }
+    nav ul .dropdown-content a { color: #9B59B6; padding: 12px 16px; text-decoration: none; display: block; }
+    nav ul .dropdown-content a:hover { background-color: #f3c1e5; }
+    nav ul .dropdown:hover .dropdown-content { display: block; }
+     
+    .main-title {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            color: #7a3eb1;
+            background-color: rgba(255, 255, 255, 0.7);
+            margin: 20px auto;
+            width: 80%;
+            border-radius: 10px;
+        }
+
+        .card {
+            background-color: rgba(255,255,255,0.85);
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .card p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #5e3370;
+        }
+
+        .btn-eliminar {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-eliminar:hover { background-color: #c0392b; }
+
+        .btn-cancelar {
+            display: inline-block;
+            background-color: #f3c1e5;
+            color: #5e3370;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancelar:hover { background-color: #e8a9d6; }
+
+    </style>
+</head>
+<body>
+{% include 'madre/navbar_madre.html' %}
+
+<div class="main-title">Eliminar Planeación</div>
+
+<div class="card">
+    <p>¿Seguro que deseas eliminar la planeación <strong>{{ planeacion.nombre_experiencia }}</strong>?</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn-eliminar">Sí, eliminar</button>
+        <a href="{% url 'planeaciones:lista_planeaciones' %}" class="btn-cancelar">Cancelar</a>
+    </form>
+</div>
+
+</body>
+</html>

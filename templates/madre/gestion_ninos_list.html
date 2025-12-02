@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestión de Niños Matriculados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+
+    }
+
+
+
+
+    /* -----------------------------------------
+        NUEVO DISEÑO DE TARJETAS (MEJORADO)
+    ------------------------------------------ */
+
+    .tabla-container {
+      max-width: 1100px;
+      margin: 40px auto;
+      background-color: rgba(255, 255, 255, 0.92);
+      border-radius: 18px;
+      padding: 40px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 32px;
+      color: #7a3eb1;
+    }
+
+    .lista-ninos {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .item-nino {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.09);
+      transition: 0.25s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #f2e6fb;
+    }
+
+    .item-nino:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    }
+
+    .info-nino {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .avatar-lista {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #f0e6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9b59b6;
+      font-size: 32px;
+      box-shadow: inset 0 3px 6px rgba(0,0,0,0.08);
+    }
+
+    .detalles-nino h3 {
+      margin: 0 0 6px 0;
+      font-size: 19px;
+      color: #4c3d57;
+      font-weight: 700;
+    }
+
+    .documento {
+      color: #7f7f7f;
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .acciones-lista {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-accion {
+      padding: 11px 14px;
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.25s ease;
+    }
+
+    .btn-accion:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    }
+
+    .purple { background: #9b59b6; }
+    .blue   { background: #3498db; }
+    .green  { background: #2ecc71; }
+    .yellow { background: #f1c40f; }
+
+    .no-data {
+      padding: 40px;
+      text-align: center;
+      font-size: 18px;
+      color: #7f7f7f;
+    }
+
+    /* -----------------------------------------
+        PAGINACIÓN ORIGINAL (SIN CAMBIOS)
+    ------------------------------------------ */
+
+    .paginacion {
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-btn {
+      padding: 8px 14px;
+      background: #9b59b6;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: .25s;
+    }
+
+    .page-btn:hover {
+      background: #8e44ad;
+      transform: translateY(-2px);
+    }
+
+    .page-btn.disabled {
+      background: #d8c6e8;
+      cursor: not-allowed;
+    }
+
+    .page-number {
+      font-size: 15px;
+      color: #5c3d78;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  {% include 'madre/navbar_madre.html' %}
+
+  <!-- CONTENIDO -->
+  <div class="tabla-container">
+    <h1>Gestión de Niños Matriculados</h1>
+
+    <div class="lista-ninos">
+      {% for nino in ninos %}
+      <div class="item-nino">
+
+        <div class="info-nino">
+          <div class="avatar-lista">
+            <i class="fas fa-child"></i>
+          </div>
+
+          <div class="detalles-nino">
+            <h3>{{ nino.nombres }} {{ nino.apellidos }}</h3>
+            <p class="documento">{{ nino.documento|default:"Sin documento" }}</p>
+          </div>
+        </div>
+
+        <div class="acciones-lista">
+          <a href="{% url 'desarrollo:listar_seguimientos' %}?nino={{ nino.id }}" class="btn-accion purple"><i class="fas fa-clipboard-check"></i> Seguimiento</a>
+          <a href="{% url 'desarrollo:listar_desarrollos' %}?nino={{ nino.id }}" class="btn-accion blue"><i class="fas fa-chart-line"></i> Desarrollo</a>
+          <a href="{% url 'desarrollo:reporte_resumen' nino.id %}" class="btn-accion green"><i class="fas fa-file-alt"></i> Reporte</a>
+          
+        </div>
+
+      </div>
+      {% empty %}
+        <p class="no-data">No hay niños matriculados.</p>
+      {% endfor %}
+    </div> <!-- Cierre de .lista-ninos -->
+
+    <!-- PAGINACIÓN MOVIDA FUERA DEL BUCLE -->
+    {% if ninos.has_other_pages %}
+      <div class="paginacion">
+
+        {% if ninos.has_previous %}
+          <a href="?page={{ ninos.previous_page_number }}" class="page-btn" title="Anterior">«</a>
+        {% else %}
+          <span class="page-btn disabled" title="Anterior">«</span>
+        {% endif %}
+
+        <span class="page-number">
+          Página {{ ninos.number }} de {{ ninos.paginator.num_pages }}
+        </span>
+
+        {% if ninos.has_next %}
+          <a href="?page={{ ninos.next_page_number }}" class="page-btn" title="Siguiente">»</a>
+        {% else %}
+          <span class="page-btn disabled" title="Siguiente">»</span>
+        {% endif %}
+
+      </div>
+    {% endif %}
+
+  </div>
+
+</body>
+</html>

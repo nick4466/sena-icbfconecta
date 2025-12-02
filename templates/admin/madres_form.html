@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% if modo_edicion %}Editar{% else %}Crear{% endif %} Madre Comunitaria</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Poppins",sans-serif;background:#f3f6fa;color:#333;display:flex;min-height:100vh}
+    .sidebar{width:250px;background:linear-gradient(180deg,#004080,#007bff);color:white;display:flex;flex-direction:column;padding:25px 0}
+    .sidebar img{height:70px;margin:0 auto 20px}
+    .sidebar h2{text-align:center;font-weight:700;margin-bottom:25px;font-size:18px}
+    .sidebar a{color:white;text-decoration:none;padding:14px 25px;display:flex;align-items:center;gap:10px;font-weight:500;transition:background .3s ease}
+    .sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,0.15);border-left:4px solid #fff}
+    .sidebar .dropdown{position:relative}
+    .sidebar .dropdown-menu{display:none;position:absolute;left:100%;top:0;background:#004080;min-width:200px;box-shadow:0 8px 16px rgba(0,0,0,.2);z-index:1;border-radius:0 8px 8px 0}
+    .sidebar .dropdown:hover .dropdown-menu{display:block}
+    .sidebar .dropdown-menu a{padding:12px 16px;border-left:none!important}
+    .main{flex:1;padding:40px}
+    .main header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+    .main header h1{font-size:28px;color:#004080;font-weight:700}
+    .form-group{margin-bottom:20px}
+    form label{font-weight:600;color:#555;margin-bottom:8px;font-size:14px;display:block}
+    form input, form select, form textarea{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc;font-family:"Poppins",sans-serif;font-size:15px}
+    form input:focus{border-color:#007bff;box-shadow:0 0 0 3px rgba(0,123,255,.15);outline:none}
+    .form-actions{margin-top:30px;display:flex;gap:15px;justify-content:flex-end}
+    .btn-guardar,.btn-volver{padding:10px 28px;border:none;border-radius:6px;color:white;font-weight:600;font-size:16px;cursor:pointer;transition:background .2s}
+    .btn-guardar{background:linear-gradient(90deg,#28a745,#218838)}
+    .btn-volver{background:#6c757d}
+    .btn-volver:hover{background:#495057}
+    .btn-guardar:hover{background:#218838}
+    .messages{list-style:none;padding:0;margin:0 0 20px 0}
+    .messages li{padding:12px;border-radius:6px;margin-bottom:8px;color:white;font-weight:500;display:flex;justify-content:space-between;align-items:center}
+    .messages li.success{background:#28a745}
+    .messages li.error{background:#dc3545}
+    .close-message{background:none;border:none;color:white;font-size:20px;cursor:pointer}
+    .required-star{color:#dc3545;margin-left:4px;font-weight:bold}
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo ICBF" />
+    <h2>ICBF Conecta</h2>
+    <a href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-tachometer-alt"></i> Inicio</a>
+    <a href="{% url 'listar_hogares' %}"><i class="fa-solid fa-house"></i> Hogares</a>
+    <a href="{% url 'listar_madres' %}" class="active"><i class="fa-solid fa-users"></i> Madres</a>
+    <a href="{% url 'listar_administradores' %}"><i class="fa-solid fa-user-shield"></i> Administradores</a>
+    <a href="{% url 'admin_reportes' %}" ><i class="fa-solid fa-chart-line"></i> Reportes</a>
+    <div class="dropdown">
+      <a href="#"><i class="fa-solid fa-cog"></i> Ajustes</a>
+      <div class="dropdown-menu">
+        <a href="{% url 'editar_perfil' %}"><i class="fa-solid fa-user-pen"></i> Editar Perfil</a>
+        <a href="{% url 'cambiar_contrasena' %}"><i class="fa-solid fa-key"></i> Cambiar Contraseña</a>
+      </div>
+    </div>
+    <div class="logout">
+      <form method="post" action="{% url 'logout' %}" style="display:inline">
+        {% csrf_token %}
+        <button type="submit" style="background:none;border:none;color:white;cursor:pointer;padding:14px 25px;display:flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;font-size:16px;font-weight:500;width:100%;text-align:left;">
+          <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>{% if modo_edicion %}Editar{% else %}Crear{% endif %} Madre Comunitaria</h1>
+    </header>
+
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li class="{{ message.tags }}">
+        {{ message }}
+        <button class="close-message">&times;</button>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="madreCreationForm">
+      {% csrf_token %}
+
+      {% if not modo_edicion %}
+      <div style="display:flex;justify-content:space-around;margin-bottom:40px;font-weight:600;">
+        <span id="step1-indicator">1. Datos de Usuario</span>
+        <span id="step2-indicator">2. Perfil de la Madre</span>
+        <span id="step3-indicator">3. Datos del Hogar</span>
+      </div>
+      {% endif %}
+
+      <!-- PASO 1 -->
+      <div class="step-form" id="step1" {% if modo_edicion %}style="display:block"{% endif %}>
+        <h2>{% if modo_edicion %}Datos de Autenticación y Contacto{% else %}Paso 1: Datos de Autenticación y Contacto{% endif %}</h2>
+        <hr style="margin-bottom:20px" />
+        {% for field in usuario_form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">{{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}</label>
+          {{ field }} {% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+          {% if not modo_edicion %}
+          <button type="button" class="btn-guardar" onclick="nextStep(1)">Siguiente</button>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="step-form" id="step2" {% if modo_edicion %}style="display:block"{% else %}style="display:none"{% endif %}>
+        <h2>{% if modo_edicion %}Perfil y Documentos de la Madre{% else %}Paso 2: Perfil y Documentos de la Madre{% endif %}</h2>
+        <hr style="margin-bottom:20px" />
+
+        {% for field in madre_profile_form %}
+          {% if field.name == 'foto_madre' %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}</label>
+            {{ field }}
+            <div id="image-preview-container" style="margin-top: 15px;">
+              <img id="image-preview"
+                                 src="{% if madre_profile_form.instance.foto_madre %}{{ madre_profile_form.instance.foto_madre.url }}{% else %}#{% endif %}"
+                                 alt="Vista previa de la foto"
+                                 style="max-width: 200px; max-height: 200px; border-radius: 8px;"
+                                 {% if not madre_profile_form.instance.foto_madre %}hidden{% endif %} />
+            </div>
+          </div>
+          {% else %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}</label>
+            {{ field }} {% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}
+          </div>
+        {% endif %}
+        {% endfor %}
+        <div class="form-actions">
+          {% if not modo_edicion %}
+          <button type="button" class="btn-volver" onclick="prevStep(2)">Anterior</button>
+          <button type="button" class="btn-guardar" onclick="nextStep(2)">Siguiente</button>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+<div class="step-form" id="step3" {% if modo_edicion %}style="display:block"{% else %}style="display:none"{% endif %}>
+  <h2>{% if modo_edicion %}Datos del Hogar Comunitario{% else %}Paso 3: Datos del Hogar Comunitario{% endif %}</h2>
+  <hr style="margin-bottom:20px" />
+
+  <div class="form-group">
+    <label for="id_regional">Regional <span class="required-star">*</span></label>
+    <select name="regional" id="id_regional" class="form-control" required>
+      <option value="">-- Seleccione una Regional --</option>
+      {% for regional in regionales %}
+        <option value="{{ regional.id }}" {% if hogar_form.data.regional == regional.id|stringformat:'s' or hogar_form.initial.regional == regional.id or hogar_form.instance.regional_id == regional.id %}selected{% endif %}>{{ regional.nombre }}</option>
+      {% endfor %}
+    </select>
+    {% for error in hogar_form.regional.errors %}<span class="error">{{ error }}</span>{% endfor %}
+    {% if regionales|length == 0 %}
+      <div style="margin-top:10px;padding:12px;border-radius:6px;background:#fff3cd;color:#856404;border:1px solid #ffeeba;">
+        No hay regionales registradas. Puedes <a href="{% url 'admin:core_regional_add' %}">agregar una regional</a> desde el panel de administración o ejecutar el script de carga de regionales.
+      </div>
+    {% endif %}
+  </div>
+  <div class="form-group">
+    <label for="id_ciudad">Ciudad <span class="required-star">*</span></label>
+    <select name="ciudad" id="id_ciudad" class="form-control" required {% if not hogar_form.initial.regional and not hogar_form.data.regional %}disabled{% endif %} data-selected-id="{{ hogar_form.instance.ciudad_id }}">
+      <option value="">-- Seleccione una Ciudad --</option>
+      {% if hogar_form.fields.ciudad.queryset.exists %}
+        {% for ciudad in hogar_form.fields.ciudad.queryset %}
+          <option value="{{ ciudad.pk }}" {% if hogar_form.initial.ciudad == ciudad.pk or hogar_form.data.ciudad == ciudad.pk|stringformat:'s' %}selected{% endif %}>{{ ciudad.nombre }}</option>
+        {% endfor %}
+      {% endif %}
+    </select>
+    {% for error in hogar_form.ciudad.errors %}<span class="error">{{ error }}</span>{% endfor %}
+  </div>
+  {% for field in hogar_form %}
+    {% if field.name != 'regional' and field.name != 'ciudad' %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }} {% if field.field.required %}<span class="required-star">*</span>{% endif %}</label>
+      {{ field }}
+      {% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}
+    </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="form-actions">
+    {% if not modo_edicion %}
+      <button type="button" class="btn-volver" onclick="prevStep(3)">Anterior</button>
+      <button type="submit" class="btn-guardar">Finalizar Creación</button>
+    {% else %}
+      <a href="{% url 'listar_madres' %}" class="btn-volver">Cancelar</a>
+      <button type="submit" class="btn-guardar">Guardar Cambios</button>
+    {% endif %}
+  </div>
+</div>
+
+    </form>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // --- Lógica para formulario multi-paso ---
+      const modoEdicion = '{{ modo_edicion|default:"" }}' === 'True' || '{{ modo_edicion|default:"" }}' === 'true';
+      if (modoEdicion) {
+        for (let i = 1; i <= 3; i++) {
+          document.getElementById(`step${i}`).style.display = 'block';
+        }
+      } else {
+        const initialStep = parseInt('{{ initial_step|default:1 }}');
+        for (let i = 1; i <= 3; i++) {
+          document.getElementById(`step${i}`).style.display = i === initialStep ? 'block' : 'none';
+        }
+        updateIndicators(initialStep);
+      }
+
+      // --- AJAX: cargar ciudades según regional ---
+      const regionalSelect = document.getElementById('id_regional');
+      const ciudadSelect = document.getElementById('id_ciudad');
+
+      if (regionalSelect && ciudadSelect) {
+        // Deshabilitar ciudad inicialmente si no hay regional seleccionada
+        if (!regionalSelect.value) {
+          ciudadSelect.disabled = true;
+          ciudadSelect.innerHTML = '<option value="">-- Seleccione una Ciudad --</option>';
+        }
+
+        regionalSelect.addEventListener('change', function() {
+          const regionalId = this.value;
+          ciudadSelect.innerHTML = '<option value="">Cargando...</option>';
+          ciudadSelect.disabled = true;
+
+          if (regionalId) {
+            fetch(`/ajax/cargar-ciudades/?regional_id=${regionalId}`)
+              .then(response => response.json())
+              .then(data => {
+                ciudadSelect.innerHTML = '<option value="">-- Seleccione una Ciudad --</option>';
+                data.forEach(ciudad => {
+                  const option = document.createElement('option');
+                  option.value = ciudad.id;
+                  option.textContent = ciudad.nombre;
+                  ciudadSelect.appendChild(option);
+                });
+                ciudadSelect.disabled = false;
+              })
+              .catch(err => {
+                ciudadSelect.innerHTML = '<option value="">-- Seleccione una Ciudad --</option>';
+                ciudadSelect.disabled = true;
+                console.error('Error al cargar ciudades:', err);
+              });
+          } else {
+            ciudadSelect.innerHTML = '<option value="">-- Seleccione una Ciudad --</option>';
+            ciudadSelect.disabled = true;
+          }
+        });
+
+        // Si hay un valor inicial en regional (modo edición), disparar el change para cargar ciudades y seleccionar la ciudad actual
+        if (regionalSelect.value) {
+          const event = new Event('change');
+          regionalSelect.dispatchEvent(event);
+          // Esperar a que se carguen las ciudades y luego seleccionar la ciudad actual si existe
+          setTimeout(() => {
+            if (ciudadSelect.dataset.selectedId) {
+              ciudadSelect.value = ciudadSelect.dataset.selectedId;
+              ciudadSelect.disabled = false;
+            }
+          }, 500);
+        }
+      }
+
+      // --- Lógica para previsualización de imagen ---
+      const fotoInput = document.getElementById('{{ madre_profile_form.foto_madre.id_for_label }}');
+      const imagePreview = document.getElementById('image-preview');
+
+      if (fotoInput && imagePreview) {
+        fotoInput.addEventListener('change', function(event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              imagePreview.src = e.target.result;
+              imagePreview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
+
+    // --- Funciones para navegación de pasos (fuera del DOMContentLoaded) ---
+    let currentStep = 1;
+    const modoEdicionGlobal = '{{ modo_edicion|default:"" }}' === 'True' || '{{ modo_edicion|default:"" }}' === 'true';
+
+    function updateIndicators(step) {
+      if (modoEdicionGlobal) return;
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`step${i}-indicator`).style.color = i <= step ? '#007bff' : '#ccc';
+      }
+    }
+
+    function prevStep(step) {
+      currentStep = step - 1;
+      document.getElementById(`step${step}`).style.display = 'none';
+      document.getElementById(`step${currentStep}`).style.display = 'block';
+      updateIndicators(currentStep);
+    }
+
+    function nextStep(step) {
+      currentStep = step + 1;
+      document.getElementById(`step${step}`).style.display = 'none';
+      document.getElementById(`step${currentStep}`).style.display = 'block';
+      updateIndicators(currentStep);
+    }
+  </script>
+</body>
+</html>

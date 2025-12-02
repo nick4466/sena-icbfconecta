@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalle de Novedad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+<style>
+
+/* ===========================
+   ESTILO GENERAL
+=========================== */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background: #f4f7fc;
+    color: #333;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+header {
+    background: #ffffff;
+    padding: 12px 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+header img {
+    height: 60px;
+}
+
+/* ===========================
+   TÍTULO PRINCIPAL
+=========================== */
+.main-title {
+    text-align: center;
+    font-size: 28px;
+    color: #0051d4;
+    margin-top: 25px;
+    font-weight: 700;
+}
+
+/* ===========================
+   TARJETA DE DETALLE
+=========================== */
+.detail-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 800px;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.detail-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.detail-card li {
+    background: #f0f5ff;
+    margin-bottom: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    border-left: 4px solid #0059ff;
+}
+
+/* ===========================
+   BOTÓN "DESCARGAR PDF"
+=========================== */
+.btn-mini-historial {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(90deg,#0043c0,#006bff);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.btn-mini-historial:hover {
+    background: #0051c8;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+    margin-top: 30px;
+    background: transparent;
+    font-size: 14px;
+    color: #7a3eb1;
+    text-align: center;
+    padding: 25px 0;
+}
+
+</style>
+
+</head>
+<body>
+
+<header>
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo del Software" />
+</header>
+
+<h2 class="main-title">Detalle de Novedad por Excusa Médica</h2>
+
+<div class="detail-card">
+    <ul>
+
+      <li><strong>Tipo:</strong> {{ novedad.get_tipo_display }}</li>
+      <li><strong>Descripción:</strong> {{ novedad.descripcion }}</li>
+      <li><strong>Observaciones:</strong> {{ novedad.observaciones }}</li>
+
+      {% if novedad.archivo_pdf %}
+      <li>
+        <strong>Soporte PDF:</strong>
+        <a href="{{ novedad.archivo_pdf.url }}" target="_blank">Ver PDF</a> |
+        <a href="{{ novedad.archivo_pdf.url }}" download>Descargar PDF</a>
+      </li>
+      {% else %}
+      <li><strong>Soporte PDF:</strong> No se adjuntó archivo</li>
+      {% endif %}
+
+    </ul>
+
+    <a href="{% url 'novedades:novedades_pdf' novedad.id %}" class="btn-mini-historial">
+        <i class="fas fa-file-pdf"></i> Descargar PDF de esta novedad
+    </a>
+
+    </ul>
+    <a href="{% url 'historial_asistencia' novedad.nino.id %}" class="btn-mini-historial">Volver al listado</a>
+
+</div>
+
+<footer>
+  © 2025 ICBF Conecta. Todos los derechos reservados.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado de Matrícula</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        /* Encabezado con barra azul */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        .header .subtitle {
+            font-size: 14px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        
+        /* Logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-container img {
+            max-width: 150px;
+            height: auto;
+        }
+        
+        /* Código de verificación */
+        .codigo-verificacion {
+            text-align: right;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        /* Secciones */
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            background-color: #f3f4f6;
+            color: #1e3a8a;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-left: 5px solid #3b82f6;
+            margin-bottom: 15px;
+        }
+        
+        /* Tablas de datos */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .data-table td {
+            padding: 10px 15px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .data-table td:first-child {
+            background-color: #f9fafb;
+            font-weight: bold;
+            width: 35%;
+            color: #374151;
+        }
+        
+        .data-table td:last-child {
+            background-color: white;
+            color: #1f2937;
+        }
+        
+        /* Declaración formal */
+        .declaracion {
+            text-align: justify;
+            line-height: 1.8;
+            padding: 20px;
+            background-color: #f9fafb;
+            border-left: 4px solid #3b82f6;
+            margin: 30px 0;
+            font-size: 14px;
+        }
+        
+        /* Pie de página */
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .firma-section {
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        .firma-line {
+            border-top: 2px solid #333;
+            width: 300px;
+            margin: 0 auto 10px;
+        }
+        
+        .firma-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #374151;
+        }
+        
+        /* Marca de agua */
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(59, 130, 246, 0.05);
+            font-weight: bold;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Sello oficial */
+        .sello {
+            position: absolute;
+            top: 150px;
+            right: 50px;
+            width: 120px;
+            height: 120px;
+            border: 3px solid #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #1e3a8a;
+            opacity: 0.7;
+            transform: rotate(-15deg);
+        }
+        
+        .info-adicional {
+            background-color: #eff6ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 12px;
+            border: 1px solid #bfdbfe;
+        }
+        
+        .info-adicional strong {
+            color: #1e40af;
+        }
+        
+        @media print {
+            .watermark { display: block; }
+            .sello { display: flex; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Marca de agua -->
+    <div class="watermark">ICBF CONECTA</div>
+    
+    <!-- Sello oficial ficticio -->
+    <div class="sello">
+        <div>
+            CERTIFICADO<br>
+            OFICIAL<br>
+            {{ año_actual }}
+        </div>
+    </div>
+    
+    <!-- Logo -->
+    {% if logo_path %}
+    <div class="logo-container">
+        <img src="{{ logo_path }}" alt="ICBF Conecta">
+    </div>
+    {% endif %}
+    
+    <!-- Encabezado -->
+    <div class="header">
+        <h1>CERTIFICADO DE MATRÍCULA</h1>
+        <div class="subtitle">Programa de Atención Integral a la Primera Infancia</div>
+    </div>
+    
+    <!-- Código de verificación -->
+    <div class="codigo-verificacion">
+        Código de verificación: {{ codigo_verificacion }}
+    </div>
+    
+    <!-- SECCIÓN: DATOS DEL NIÑO -->
+    <div class="section">
+        <div class="section-title">DATOS DEL NIÑO(A)</div>
+        <table class="data-table">
+            <tr>
+                <td>Nombres y Apellidos</td>
+                <td>{{ nino.nombres|upper }} {{ nino.apellidos|upper }}</td>
+            </tr>
+            <tr>
+                <td>Documento de Identidad</td>
+                <td>{{ nino.get_tipo_documento_display|default:"Registro Civil" }}: {{ nino.documento }}</td>
+            </tr>
+            <tr>
+                <td>Fecha de Nacimiento</td>
+                <td>{{ fecha_nacimiento_texto }}</td>
+            </tr>
+            <tr>
+                <td>Edad Actual</td>
+                <td>{{ edad }} año{% if edad != 1 %}s{% endif %}</td>
+            </tr>
+            <tr>
+                <td>Género</td>
+                <td>{{ nino.get_genero_display|capfirst }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- SECCIÓN: DATOS DEL ACUDIENTE -->
+    <div class="section">
+        <div class="section-title">DATOS DEL PADRE/MADRE O ACUDIENTE</div>
+        <table class="data-table">
+            <tr>
+                <td>Nombre Completo</td>
+                <td>{{ padre.usuario.nombres|upper }} {{ padre.usuario.apellidos|upper }}</td>
+            </tr>
+            <tr>
+                <td>Documento de Identidad</td>
+                <td>{{ padre.usuario.get_tipo_documento_display }}: {{ padre.usuario.documento }}</td>
+            </tr>
+            <tr>
+                <td>Dirección de Residencia</td>
+                <td>{{ padre.usuario.direccion|default:"No especificada" }}</td>
+            </tr>
+            <tr>
+                <td>Teléfono de Contacto</td>
+                <td>{{ padre.usuario.telefono }}</td>
+            </tr>
+            <tr>
+                <td>Correo Electrónico</td>
+                <td>{{ padre.usuario.correo }}</td>
+            </tr>
+            {% if padre.estrato %}
+            <tr>
+                <td>Estrato Socioeconómico</td>
+                <td>{{ padre.estrato }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+    
+    <!-- SECCIÓN: DATOS DEL HOGAR COMUNITARIO -->
+    <div class="section">
+        <div class="section-title">DATOS DEL HOGAR COMUNITARIO</div>
+        <table class="data-table">
+            <tr>
+                <td>Nombre del Hogar</td>
+                <td>{{ hogar.nombre_hogar|upper }}</td>
+            </tr>
+            <tr>
+                <td>Dirección</td>
+                <td>{{ hogar.direccion }}</td>
+            </tr>
+            <tr>
+                <td>Barrio/Localidad</td>
+                <td>{{ hogar.barrio|default:hogar.localidad }}</td>
+            </tr>
+            <tr>
+                <td>Ciudad</td>
+                <td>{{ hogar.ciudad }}</td>
+            </tr>
+            <tr>
+                <td>Regional</td>
+                <td>{{ hogar.regional }}</td>
+            </tr>
+            <tr>
+                <td>Madre Comunitaria</td>
+                <td>{{ hogar.madre.usuario.nombres }} {{ hogar.madre.usuario.apellidos }}</td>
+            </tr>
+            <tr>
+                <td>Fecha de Ingreso</td>
+                <td>{{ fecha_ingreso_texto }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- DECLARACIÓN FORMAL -->
+    <div class="declaracion">
+        Por medio del presente certificado se hace constar que el niño(a) 
+        <strong>{{ nino.nombres|upper }} {{ nino.apellidos|upper }}</strong>, 
+        identificado(a) con documento <strong>{{ nino.documento }}</strong>, 
+        se encuentra registrado(a) y actualmente matriculado(a) en el 
+        <strong>{{ hogar.nombre_hogar }}</strong>, durante el periodo lectivo 
+        <strong>{{ año_actual }}</strong>. Los datos contenidos en el presente 
+        certificado han sido verificados con la información suministrada por el hogar 
+        comunitario y se encuentran debidamente registrados en nuestro sistema de 
+        información institucional.
+    </div>
+    
+    <!-- Información adicional -->
+    <div class="info-adicional">
+        <strong>Nota informativa:</strong> Este certificado es válido únicamente con el código 
+        de verificación impreso. Para validar la autenticidad de este documento, puede consultar 
+        en nuestras oficinas o comunicarse a través de los canales oficiales del programa.
+    </div>
+    
+    <!-- Firma -->
+    <div class="firma-section">
+        <div class="firma-line"></div>
+        <div class="firma-text">
+            {{ hogar.madre.usuario.nombres }} {{ hogar.madre.usuario.apellidos }}<br>
+            Madre Comunitaria<br>
+            {{ hogar.nombre_hogar }}
+        </div>
+    </div>
+    
+    <!-- Pie de página -->
+    <div class="footer">
+        <div class="footer-row">
+            <div><strong>Fecha de emisión:</strong> {{ fecha_emision }}</div>
+            <div><strong>Código:</strong> {{ codigo_verificacion }}</div>
+        </div>
+        <div style="text-align: center; margin-top: 15px; font-style: italic;">
+            Este documento ha sido generado electrónicamente y tiene validez legal sin necesidad de firma autógrafa.
+        </div>
+    </div>
+</body>
+</html>

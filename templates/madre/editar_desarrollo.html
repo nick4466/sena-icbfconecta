@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Desarrollo del Niño</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+    }
+    .main-title {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #7a3eb1;
+      background-color: #f3c4ffb3;
+      margin: 20px auto;
+      width: 80%;
+      border-radius: 10px;
+    }
+    .contenedor {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .card {
+      background-color: rgba(255,255,255,0.9);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+      border-left: 8px solid #9B59B6;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    textarea { resize: vertical; min-height: 100px; }
+    .botones { display: block; width: 100%; background-color: #9B59B6; color: white; border: none; padding: 15px 20px; font-size: 18px; border-radius: 10px; cursor: pointer; margin-top: 20px; }
+    .botones:hover { background-color: #8e44ad; }
+    input[disabled], textarea[readonly] { background: #f3f3f3; color: #555; }
+    h4 { font-size: 18px; margin-top: 20px; margin-bottom: 8px; color: #5e3370; }
+    hr { margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="main-title">ICBF - CONECTA | Editar Desarrollo del Niño</div>
+  <div class="contenedor">
+    <div class="card">
+      <form method="post" action="" id="editarDesarrolloForm">
+        {% csrf_token %}
+        <div class="form-group">
+          <label><b>Niño/a:</b></label>
+          <input type="text" value="{{ desarrollo.nino.nombres }} {{ desarrollo.nino.apellidos }}" disabled>
+        </div>
+        <div class="form-group">
+          <label><b>Mes evaluado:</b></label>
+          <input type="text" value="{{ desarrollo.fecha_fin_mes|date:'F Y' }}" disabled>
+        </div>
+        <hr>
+        <h4>Observaciones finales (opcional)</h4>
+        <textarea name="observaciones_adicionales" placeholder="Observaciones adicionales">{{ desarrollo.observaciones_adicionales|default_if_none:'' }}</textarea>
+        <h4>Recomendaciones personales (opcional)</h4>
+        <textarea name="recomendaciones_personales" placeholder="Recomendaciones personales">{{ desarrollo.recomendaciones_personales|default_if_none:'' }}</textarea>
+        <button class="botones" type="submit"><i class="fas fa-save"></i> Guardar Cambios</button>
+      </form>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'desarrollo:listar_desarrollos' %}" style="color: #555; text-decoration: none;">← Volver al listado</a>
+      </div>
+      <hr>
+      <h4>Resumen mensual (solo lectura)</h4>
+      <div class="form-group">
+        <label>Cantidad de seguimientos registrados:</label>
+        <input type="text" value="{{ seguimientos_mes_count|default:'-' }}" disabled>
+      </div>
+      <div class="form-group">
+        <label>Cantidad de novedades del mes:</label>
+        <input type="text" value="{{ novedades_mes_count|default:'-' }}" disabled>
+      </div>
+      <div class="form-group">
+        <label>Promedio de valoración diaria:</label>
+        <input type="text" value="{{ desarrollo.valoracion_promedio_mes|default:'-' }}" disabled>
+      </div>
+      <div class="form-group">
+        <label>Tendencia:</label>
+        <input type="text" value="{{ desarrollo.get_tendencia_valoracion_display|default:desarrollo.tendencia_valoracion|default:'-' }}" disabled>
+      </div>
+      <div class="form-group">
+        <label>Participación más frecuente:</label>
+        <input type="text" value="{{ desarrollo.participacion_frecuente|default:'-' }}" disabled>
+      </div>
+      <div class="form-group">
+        <label>Comportamiento más frecuente:</label>
+        <input type="text" value="{{ desarrollo.comportamiento_frecuente|default:'-' }}" disabled>
+      </div>
+      <h4>Evaluación por áreas del desarrollo</h4>
+      <div class="form-group">
+        <label>Cognitivo:</label>
+        <textarea readonly>{{ desarrollo.evaluacion_cognitiva }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Comunicativo / Lenguaje:</label>
+        <textarea readonly>{{ desarrollo.evaluacion_comunicativa }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Socioemocional:</label>
+        <textarea readonly>{{ desarrollo.evaluacion_socio_afectiva }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Corporal / Motricidad:</label>
+        <textarea readonly>{{ desarrollo.evaluacion_corporal }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Autonomía:</label>
+        <textarea readonly>{{ desarrollo.evaluacion_autonomia }}</textarea>
+      </div>
+      <h4>Fortalezas del mes</h4>
+      <textarea readonly>{{ desarrollo.fortalezas_mes }}</textarea>
+      <h4>Aspectos por mejorar</h4>
+      <textarea readonly>{{ desarrollo.aspectos_a_mejorar }}</textarea>
+      <h4>Alertas del mes</h4>
+      <textarea readonly>{{ desarrollo.alertas_mes }}</textarea>
+      <h4>Conclusión general</h4>
+      <textarea readonly>{{ desarrollo.conclusion_general }}</textarea>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}ICBF Conecta{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ICBF Conecta</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'novedades:novedades_list' %}">Novedades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'novedades:asistencia_form' %}">Asistencia</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Planeaciones</a></li>
+                    <!-- Agrega más módulos aquí -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% block content %}
+        <!-- Aquí se inserta el contenido de cada página -->
+        {% endblock %}
+    </div>
+
+    <footer class="text-center mt-5 mb-3 text-muted">
+        <small>© 2025 ICBF Conecta</small>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado de Desarrollo - {{ nino.nombres }}</title>
+
+    <style>
+        /* --- Página A4 horizontal --- */
+        @page {
+            size: A4 landscape;
+            margin: 1.5cm;
+        }
+
+        /* Evitar problemas con alturas en xhtml2pdf */
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Fondo --- */
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #333;
+            /* background-image: url("{{ fondo_url|escape }}"); */
+            background-repeat: no-repeat;
+            background-size: cover;   /* compatible */
+            background-position: center;
+        }
+
+        /* --- Contenedor principal --- */
+        .container {
+            text-align: center;
+            padding: 20px 70px;
+            box-sizing: border-box;
+            min-height: 500px;   /* valor numérico para evitar error */
+            display: block;      /* evitar flex para xhtml2pdf */
+        }
+
+        /* --- Títulos --- */
+        h1 {
+            font-size: 28px;
+            color: #7D3C98;
+            margin: 10px 0 5px 0;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #2471A3;
+            margin: 0 0 10px 0;
+        }
+
+        /* --- Nombre del niño --- */
+        .nombre-nino {
+            font-size: 32px;
+            font-weight: bold;
+            color: #D35400;
+            margin: 8px 0 12px 0;
+        }
+
+        /* --- Mensajes --- */
+        .mensaje-titulo {
+            font-size: 19px;
+            font-weight: bold;
+            color: #27AE60;
+            margin-top: 10px;
+        }
+
+        .mensaje-cuerpo {
+            font-size: 16px;
+            color: #555;
+            margin: 10px auto 20px auto;
+            max-width: 70%;
+            line-height: 1.4;
+            
+        }
+
+        /* --- Sección de firmas --- */
+        .firmas {
+            margin-top: 40px;
+        }
+
+        .firmas table {
+            width: 60%;
+            margin: 0 auto;
+            border: none;
+        }
+
+        .firmas td {
+            width: 50%;
+            text-align: center;
+            padding-top: 15px;
+            
+        }
+
+        .firma-nombre {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 2px 0 0 0;
+        }
+
+        .firma-cargo {
+            font-size: 12pt;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="{{ fondo_url }}" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 0;" />
+    <div class="container" style="position: relative; z-index: 1;">
+
+        <!-- Texto central -->
+        <div>
+            <h1>Certificado de Desempeño de {{ nombre_mes }}</h1>
+            <h2>Otorgado a:</h2>
+
+            <div class="nombre-nino">{{ nino.nombres }} {{ nino.apellidos }}</div>
+
+            <p class="mensaje-titulo">{{ titulo_mensaje }}</p>
+            <p class="mensaje-cuerpo">{{ mensaje }}</p>
+        </div>
+
+        <!-- Firmas -->
+        <div class="firmas">
+            <table>
+                <tr>
+                    <td>
+                        <p class="firma-nombre">
+                            _____________________________
+                        </p>
+                        <p class="firma-cargo">Madre Comunitaria: <br>
+                        {{ nino.hogar.madre.usuario.nombres }} {{ nino.hogar.madre.usuario.apellidos }}</p>
+                    </td>
+
+                    <td>
+                        <p class="firma-nombre">{{ hogar.nombre_hogar }}</p>
+                        <p class="firma-cargo">Hogar Comunitario ICBF</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</body>
+</html>

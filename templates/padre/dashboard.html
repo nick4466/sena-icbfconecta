@@ -1,0 +1,418 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Página Principal - Padres de Familia</title>
+
+  <!-- Fuentes y recursos -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    /* ======================== */
+    /*     ESTILOS GLOBALES     */
+    /* ======================== */
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-image: url("{% static 'img/fondopadres.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    .borde2 {
+      text-align: center;
+      background-color: #4DB6FF;
+      color: white;
+      padding: 10px 0;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 3px solid #FFEE58;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    /* ======================== */
+    /*          HEADER          */
+    /* ======================== */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(255,255,255,0.95);
+      padding: 14px 24px;
+      border-bottom: 3px solid #FFB74D;
+      border-radius: 0 0 22px 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 10;
+    }
+
+    header img { height: 60px; }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      align-items: center; /* <-- Añadido para alinear verticalmente */
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a,
+    nav ul li button {
+      color: #4DB6FF;
+      font-weight: bold;
+      font-size: 16px;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      transition: 0.3s;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    nav ul li a:hover,
+    nav ul li button:hover {
+      background: #E3F2FD;
+    }
+
+    .dropdown { position: relative; }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 180px;
+      border-radius: 12px;
+      padding: 8px 0;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    .dropdown:hover .dropdown-content { display: block; }
+
+    .dropdown-content a,
+    .dropdown-content button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 16px;
+      color: #E57373;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .dropdown-content a:hover,
+    .dropdown-content button:hover {
+      background: #FFEBEE;
+    }
+
+    /* ======================== */
+    /*      CONTENEDOR MAIN     */
+    /* ======================== */
+    .dashboard-container {
+      width: 92%;
+      max-width: 1390px;
+      margin: 35px auto;
+      background: rgba(255, 255, 255, 0.856);
+      padding: 32px;
+      border-radius: 24px;
+      border: 3px solid #81C784;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: #4DB6FF;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .bienvenida p {
+      text-align: center;
+      color: #E57373;
+      margin-bottom: 25px;
+      font-size: 16px;
+    }
+
+    /* ======================== */
+    /*       TARJETAS GRID      */
+    /* ======================== */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+
+    /* ======================== */
+    /*     NUEVO DISEÑO DE TARJETAS     */
+    /* ======================== */
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      justify-content: space-between;
+    }
+
+    .card-header img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%; /* Círculo perfecto */
+      object-fit: cover;
+      border: 4px solid #4DB6FF;
+      box-shadow: 0 4px 10px rgba(77, 182, 255, 0.3);
+    }
+
+    .card-header-info h3 {
+      margin: 0;
+      font-size: 22px;
+      color: #333;
+      font-weight: 700;
+    }
+
+    .card-header-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-body {
+      flex-grow: 1; /* Permite que el cuerpo de la tarjeta ocupe el espacio disponible */
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .info-section {
+      background: #f8f9fa;
+      border-left: 5px solid #4DB6FF;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .info-section h4 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      color: #039BE5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .novedad-reciente {
+      background: #FFEBEE;
+      border-left-color: #E57373;
+    }
+    .novedad-reciente h4 {
+      color: #D32F2F;
+    }
+
+    .card-footer {
+      margin-top: 20px; /* Espacio antes del footer */
+      padding-top: 16px;
+      text-align: right; /* Alinea el ícono restante a la derecha */
+    }
+
+    .btn-principal {
+      background: linear-gradient(135deg, #4DB6FF, #039BE5);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(77, 182, 255, 0.2);
+    }
+
+    .btn-principal:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(77, 182, 255, 0.4);
+    }
+
+    .quick-actions a {
+      font-size: 22px;
+      color: #81C784;
+      transition: color 0.2s, transform 0.2s;
+      display: inline-block; /* Para que la transformación funcione correctamente */
+    }
+
+    .quick-actions a:hover {
+      color: #66BB6A;
+      transform: scale(1.1);
+    }
+
+    /* === Estilos para el Menú Desplegable de Usuario (adaptados de madre) === */
+    .user-menu-dropdown {
+        position: relative;
+        display: inline-block;
+        
+    }
+
+    .user-menu-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .navbar-user-name {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .user-menu-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 220px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 100;
+        border-radius: 8px;
+        padding: 8px 0;
+        border: 1px solid #ddd;
+        
+    }
+
+    .user-menu-dropdown:hover .user-menu-content {
+        display: block;
+    }
+
+    .user-menu-content .user-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+  </style>
+</head>
+
+
+<body>
+
+  {% include 'padre/navbar_padre.html' %}
+
+  <!-- ======================== -->
+  <!--       CONTENIDO         -->
+  <!-- ======================== -->
+  <div class="dashboard-container">
+
+    <div class="bienvenida">
+      <h1>¡Bienvenido, <strong>{{ user.nombres }}!</strong></h1>
+      <p>Aquí puedes ver el desarrollo y la actividad diaria de tus hijos.</p>
+    </div>
+
+    <div class="grid-container">
+
+      {% for data in ninos_data %}
+
+        <div class="card">
+
+          <!-- HEADER TARJETA -->
+          <div class="card-header">
+            <div style="display: flex; gap: 18px; align-items: flex-start; flex-grow: 1;">
+              {% if data.nino.foto %}
+                <img src="{{ data.nino.foto.url }}" alt="Foto de {{ data.nino.nombres }}">
+              {% else %}
+                <img src="{% static 'img/nino_placeholder.jpg' %}" alt="Foto de {{ data.nino.nombres }}">
+              {% endif %}
+  
+              <div class="card-header-info">
+                <h3>{{ data.nino.nombres }} {{ data.nino.apellidos }}</h3>
+                <p style="margin-top: 4px;">Hogar: {{ data.nino.hogar.nombre_hogar }}</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- CUERPO TARJETA -->
+          <div class="card-body">
+
+            {% if data.ultimo_desarrollo %}
+            <div class="info-section">
+              <h4><i class="fas fa-chart-line"></i> Resumen del Desarrollo ({{ data.ultimo_desarrollo.fecha_fin_mes|date:"F" }})</h4>
+              <p>{{ data.ultimo_desarrollo.conclusion_general|truncatewords:25 }}</p> <br>
+              <div style="text-align: right; margin-top: 10px;">
+                <a href="{% url 'padre_ver_desarrollo' data.nino.id %}" class="btn-principal">Ver Desarrollo</a>
+              </div>
+
+            </div>
+            {% else %}
+            <div class="info-section">
+              <p>Aún no hay registros de desarrollo para este niño.</p>
+            </div>
+            {% endif %}
+
+            {% if data.ultima_novedad %}
+            <div class="info-section novedad-reciente">
+              <h4><i class="fas fa-exclamation-triangle"></i> Novedad Reciente</h4>
+              <p><strong>{{ data.ultima_novedad.get_tipo_display }}:</strong>
+                {{ data.ultima_novedad.descripcion|truncatewords:15 }}
+              </p>
+            </div>
+            {% endif %}
+
+          </div>
+
+          <!-- FOOTER TARJETA -->
+          <div class="card-footer">
+            <div class="quick-actions">
+              <a href="{% url 'calendario_padres' %}" title="Ver Calendario">
+                <i class="fas fa-calendar-alt"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      {% empty %}
+
+        <div class="card" style="padding:30px;">
+          <h3>No hay niños asignados</h3>
+          <p>Si crees que es un error, contacta a la madre comunitaria.</p>
+        </div>
+
+      {% endfor %}
+
+    </div>
+  </div>
+
+</body>
+</html>

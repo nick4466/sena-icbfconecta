@@ -1,0 +1,721 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matricular Niño a Padre Existente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: #333; }
+    
+
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #7a3eb1;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .alert-info {
+      background: #cce7f0;
+      color: #0c5460;
+      border: 1px solid #b6d4fe;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .step {
+      padding: 30px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .step:last-child { border-bottom: none; }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .step-number {
+      background: #7a3eb1;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .step-title {
+      color: #7a3eb1;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .form-group.full-width {
+      flex: 1 1 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #7a3eb1;
+      box-shadow: 0 0 0 3px rgba(122, 62, 177, 0.1);
+    }
+
+    .buscar-container {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .buscar-container .form-group {
+      flex: 1;
+    }
+
+    .btn-buscar {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s ease;
+      height: fit-content;
+    }
+
+    .btn-buscar:hover {
+      background: #218838;
+    }
+
+    .padre-info {
+      background: #f8f9fa;
+      border: 2px solid #28a745;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .padre-info.show {
+      display: block;
+    }
+
+    .padre-info h4 {
+      color: #28a745;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .padre-datos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .padre-dato {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .padre-dato strong {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .padre-dato span {
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      padding: 20px 0;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-cancel:hover {
+      background: #545b62;
+    }
+
+    .btn-submit {
+      background: #7a3eb1;
+      color: white;
+    }
+
+    .btn-submit:hover {
+      background: #6a2c91;
+    }
+
+    .btn-submit:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .error-text {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #7a3eb1;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+      
+      .buscar-container {
+        flex-direction: column;
+      }
+      
+      .padre-datos {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'madre/navbar_madre.html' %}
+
+  <div class="container">
+    <h1>
+      <i class="fas fa-user-plus"></i>
+      Matricular Niño a Padre Existente
+    </h1>
+    <div class="subtitle">
+      Hogar: <strong>{{ hogar_madre.nombre_hogar }}</strong>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+          <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="matriculaForm">
+      {% csrf_token %}
+      <input type="hidden" name="padre_seleccionado" id="padre_seleccionado">
+      
+      <div class="form-container">
+        <!-- Paso 1: Buscar Padre -->
+        <div class="step">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Buscar Padre Existente</div>
+          </div>
+
+          <div class="alert-info">
+            <i class="fas fa-info-circle"></i>
+            Ingrese el documento del padre que ya está registrado en el sistema.
+          </div>
+
+          <div class="buscar-container">
+            <div class="form-group">
+              <label for="{{ buscar_form.documento.id_for_label }}">{{ buscar_form.documento.label }}</label>
+              {{ buscar_form.documento }}
+            </div>
+            <button type="button" class="btn-buscar" id="btnBuscarPadre">
+              <i class="fas fa-search"></i> Buscar
+            </button>
+          </div>
+
+          <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Buscando padre...</p>
+          </div>
+
+          <div class="padre-info" id="padreInfo">
+            <h4><i class="fas fa-user-check"></i> Padre Encontrado</h4>
+            <div class="padre-datos" id="padreDatos">
+              <!-- Los datos se llenarán con JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Datos del Niño -->
+        <div class="step" id="stepNino" style="opacity: 0.5; pointer-events: none;">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Datos del Niño</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ nino_form.nombres.id_for_label }}">{{ nino_form.nombres.label }}</label>
+              {{ nino_form.nombres }}
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.apellidos.id_for_label }}">{{ nino_form.apellidos.label }}</label>
+              {{ nino_form.apellidos }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ nino_form.documento.id_for_label }}">{{ nino_form.documento.label }}</label>
+              {{ nino_form.documento }}
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.fecha_nacimiento.id_for_label }}">{{ nino_form.fecha_nacimiento.label }}</label>
+              {{ nino_form.fecha_nacimiento }}
+              <div id="mensaje-edad-nino" style="margin-top: 8px; font-weight: 500; font-size: 14px;"></div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ nino_form.genero.id_for_label }}">{{ nino_form.genero.label }}</label>
+              {{ nino_form.genero }}
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.nacionalidad.id_for_label }}">{{ nino_form.nacionalidad.label }}</label>
+              {{ nino_form.nacionalidad }}
+            </div>
+          </div>
+
+          <div class="form-row" id="otro-pais-container" style="display: none;">
+            <div class="form-group">
+              <label for="{{ nino_form.otro_pais.id_for_label }}">{{ nino_form.otro_pais.label }}</label>
+              {{ nino_form.otro_pais }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ nino_form.tipo_sangre.id_for_label }}">{{ nino_form.tipo_sangre.label }}</label>
+              {{ nino_form.tipo_sangre }}
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.parentesco.id_for_label }}">{{ nino_form.parentesco.label }}</label>
+              {{ nino_form.parentesco }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label>
+                {{ nino_form.tiene_discapacidad }}
+                {{ nino_form.tiene_discapacidad.label }}
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row" id="discapacidad-container" style="display: none;">
+            <div class="form-group">
+              <label>{{ nino_form.tipos_discapacidad.label }}</label>
+              <div class="checkbox-group">
+                {% for choice in nino_form.tipos_discapacidad %}
+                  <div class="checkbox-item">
+                    {{ choice.tag }}
+                    <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.otra_discapacidad.id_for_label }}">{{ nino_form.otra_discapacidad.label }}</label>
+              {{ nino_form.otra_discapacidad }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ nino_form.foto.id_for_label }}">{{ nino_form.foto.label }}</label>
+              {{ nino_form.foto }}
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.carnet_vacunacion.id_for_label }}">{{ nino_form.carnet_vacunacion.label }}</label>
+              {{ nino_form.carnet_vacunacion }}
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ nino_form.certificado_eps.id_for_label }}">{{ nino_form.certificado_eps.label }}</label>
+              {{ nino_form.certificado_eps }}
+            </div>
+            <div class="form-group">
+              <label for="{{ nino_form.registro_civil_img.id_for_label }}">{{ nino_form.registro_civil_img.label }}</label>
+              {{ nino_form.registro_civil_img }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a href="{% url 'listar_ninos' %}" class="btn btn-cancel">
+          <i class="fas fa-arrow-left"></i> Cancelar
+        </a>
+        <button type="submit" class="btn btn-submit" id="btnSubmit" disabled>
+          <i class="fas fa-plus"></i> Matricular Niño
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnBuscarPadre = document.getElementById('btnBuscarPadre');
+      const documentoInput = document.getElementById('{{ buscar_form.documento.id_for_label }}');
+      const loading = document.getElementById('loading');
+      const padreInfo = document.getElementById('padreInfo');
+      const stepNino = document.getElementById('stepNino');
+      const btnSubmit = document.getElementById('btnSubmit');
+      const padreSeleccionado = document.getElementById('padre_seleccionado');
+      const nacionalidadSelect = document.getElementById('{{ nino_form.nacionalidad.id_for_label }}');
+      const otroPaisContainer = document.getElementById('otro-pais-container');
+      const tieneDiscapacidadCheck = document.getElementById('{{ nino_form.tiene_discapacidad.id_for_label }}');
+      const discapacidadContainer = document.getElementById('discapacidad-container');
+
+      // Manejar búsqueda de padre
+      btnBuscarPadre.addEventListener('click', function() {
+        const documento = documentoInput.value.trim();
+        
+        if (!documento) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Documento requerido',
+            text: 'Por favor ingrese el documento del padre.'
+          });
+          return;
+        }
+
+        loading.style.display = 'block';
+        padreInfo.classList.remove('show');
+        
+        fetch(`{% url 'buscar_padre_ajax' %}?documento=${documento}`)
+          .then(response => response.json())
+          .then(data => {
+            loading.style.display = 'none';
+            
+            if (data.encontrado && data.padre) {
+              mostrarPadreEncontrado(data.padre);
+              habilitarFormularioNino();
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Padre no encontrado',
+                text: data.mensaje || 'No se encontró un padre con ese documento.',
+                showCancelButton: true,
+                confirmButtonText: 'Registrar nuevo padre',
+                cancelButtonText: 'Intentar de nuevo',
+                confirmButtonColor: '#7a3eb1'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  window.location.href = '{% url "matricular_nino" %}';
+                }
+              });
+            }
+          })
+          .catch(error => {
+            loading.style.display = 'none';
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error en la búsqueda. Intente nuevamente.'
+            });
+          });
+      });
+
+      // Buscar al presionar Enter
+      documentoInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btnBuscarPadre.click();
+        }
+      });
+
+      function mostrarPadreEncontrado(padre) {
+        const padreDatos = document.getElementById('padreDatos');
+        padreDatos.innerHTML = `
+          <div class="padre-dato">
+            <strong>Nombres:</strong>
+            <span>${padre.nombres}</span>
+          </div>
+          <div class="padre-dato">
+            <strong>Apellidos:</strong>
+            <span>${padre.apellidos}</span>
+          </div>
+          <div class="padre-dato">
+            <strong>Documento:</strong>
+            <span>${padre.documento}</span>
+          </div>
+          <div class="padre-dato">
+            <strong>Correo:</strong>
+            <span>${padre.correo}</span>
+          </div>
+          <div class="padre-dato">
+            <strong>Teléfono:</strong>
+            <span>${padre.telefono}</span>
+          </div>
+          <div class="padre-dato">
+            <strong>Ocupación:</strong>
+            <span>${padre.ocupacion}</span>
+          </div>
+        `;
+        
+        padreSeleccionado.value = padre.id;
+        padreInfo.classList.add('show');
+      }
+
+      function habilitarFormularioNino() {
+        stepNino.style.opacity = '1';
+        stepNino.style.pointerEvents = 'auto';
+        btnSubmit.disabled = false;
+      }
+
+      // Manejar nacionalidad "otro país"
+      if (nacionalidadSelect) {
+        nacionalidadSelect.addEventListener('change', function() {
+          if (this.value === 'otro') {
+            otroPaisContainer.style.display = 'flex';
+          } else {
+            otroPaisContainer.style.display = 'none';
+          }
+        });
+      }
+
+      // Manejar discapacidad
+      if (tieneDiscapacidadCheck) {
+        tieneDiscapacidadCheck.addEventListener('change', function() {
+          if (this.checked) {
+            discapacidadContainer.style.display = 'flex';
+          } else {
+            discapacidadContainer.style.display = 'none';
+          }
+        });
+      }
+
+      // ========== VALIDACIÓN DE EDAD DEL NIÑO ==========
+      var fechaNacimiento = document.getElementById("{{ nino_form.fecha_nacimiento.id_for_label }}");
+      var mensajeEdad = document.getElementById("mensaje-edad-nino");
+      
+      function validarEdadNino() {
+        if (!fechaNacimiento.value) {
+          fechaNacimiento.style.borderColor = "";
+          fechaNacimiento.style.backgroundColor = "";
+          mensajeEdad.textContent = "";
+          return;
+        }
+        
+        var hoy = new Date();
+        var fechaNac = new Date(fechaNacimiento.value);
+        
+        // Calcular edad exacta
+        var edad = hoy.getFullYear() - fechaNac.getFullYear();
+        var mes = hoy.getMonth() - fechaNac.getMonth();
+        if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+          edad--;
+        }
+        
+        // Validar rango de edad (1 a 5 años)
+        if (edad < 1) {
+          fechaNacimiento.style.borderColor = "#dc3545";
+          fechaNacimiento.style.backgroundColor = "#ffe6e6";
+          mensajeEdad.style.color = "#dc3545";
+          mensajeEdad.innerHTML = "<i class='fas fa-exclamation-circle'></i> El niño tiene menos de 1 año y no puede ser matriculado.";
+        } else if (edad > 5) {
+          fechaNacimiento.style.borderColor = "#dc3545";
+          fechaNacimiento.style.backgroundColor = "#ffe6e6";
+          mensajeEdad.style.color = "#dc3545";
+          mensajeEdad.innerHTML = "<i class='fas fa-exclamation-circle'></i> El niño es mayor de 5 años y no puede ser matriculado.";
+        } else {
+          fechaNacimiento.style.borderColor = "#28a745";
+          fechaNacimiento.style.backgroundColor = "#e6f9e6";
+          mensajeEdad.style.color = "#28a745";
+          mensajeEdad.innerHTML = "<i class='fas fa-check-circle'></i> Edad adecuada para matricular (" + edad + " año" + (edad !== 1 ? "s" : "") + ").";
+        }
+      }
+      
+      if (fechaNacimiento) {
+        fechaNacimiento.addEventListener("change", validarEdadNino);
+        fechaNacimiento.addEventListener("blur", validarEdadNino);
+        // Validar en carga si ya hay valor
+        if (fechaNacimiento.value) {
+          validarEdadNino();
+        }
+      }
+    });
+  </script>
+
+  {% if messages %}
+    <script>
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+          Swal.fire({
+            title: '¡Matrícula exitosa!',
+            text: '{{ message|escapejs }}',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+        {% endif %}
+      {% endfor %}
+    </script>
+  {% endif %}
+</body>
+</html>

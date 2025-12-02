@@ -1,0 +1,380 @@
+{% load static %}
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ICBF Conecta - Reportes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f3f6fa;
+      color: #333;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: linear-gradient(180deg, #004080, #007bff);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 25px 0;
+      box-shadow: 3px 0 12px rgba(0,0,0,0.1);
+    }
+
+    .sidebar img {
+      height: 70px;
+      margin: 0 auto 20px;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 25px;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 14px 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: rgba(255, 255, 255, 0.15);
+      border-left: 4px solid #ffffff;
+    }
+
+    /* Estilos para el menú desplegable */
+    .sidebar .dropdown { position: relative; }
+    .sidebar .dropdown .dropdown-menu {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: 0;
+      background-color: #004080;
+      min-width: 200px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 0 8px 8px 0;
+    }
+    .sidebar .dropdown:hover .dropdown-menu { display: block; }
+    .sidebar .dropdown-menu a {
+      padding: 12px 16px;
+      border-left: none !important; /* Quitar borde del estado :hover o .active */
+    }
+
+    .sidebar .logout {
+      margin-top: auto;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding-top: 15px;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .main header h1 {
+      font-size: 28px;
+      color: #004080;
+      font-weight: 700;
+    }
+
+    .main header span {
+      font-size: 15px;
+      color: #666;
+    }
+
+    /* Report Builder Styles */
+    .report-builder {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .report-section {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      padding: 25px;
+    }
+    .report-section h3 {
+      font-size: 20px;
+      font-weight: 600;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 10px;
+      color: #0056b3;
+      margin-bottom: 14px;
+    }
+    .report-section form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      align-items: flex-end;
+    }
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-group input, .form-group select {
+      padding: 8px 12px;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-family: "Poppins", sans-serif;
+      font-size: 15px;
+    }
+
+    .form-actions {
+      grid-column: -1; /* Ocupa la última columna */
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-limpiar {
+      text-decoration: none;
+      color: #495057;
+      background-color: #f1f3f5;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      border: 1px solid #dee2e6;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn-limpiar:hover {
+      background-color: #e9ecef;
+    }
+
+    .btn-reporte {
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(90deg, #0056b3, #007bff);
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: opacity 0.3s ease;
+      display: inline-block;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-reporte:hover {
+      opacity: 0.9;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 15px;
+    }
+
+    .checkbox-group input {
+      width: auto;
+    }
+
+    .checkbox-group label {
+      margin-bottom: 0;
+      font-weight: normal;
+    }
+
+    /* Responsive */
+    @media (max-width: 800px) {
+        .sidebar {
+            display: none;
+        }
+        .main {
+            padding: 20px;
+        }
+        .main header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .report-section form {
+            grid-template-columns: 1fr; /* Apila los campos en una sola columna */
+        }
+        .form-actions {
+            grid-column: 1 / -1; /* Asegura que ocupe todo el ancho */
+            flex-direction: column; /* Apila los botones */
+            gap: 12px;
+            margin-top: 10px;
+        }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo ICBF" />
+    <h2>ICBF Conecta</h2>
+    <a href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-tachometer-alt"></i> Inicio</a>
+    <a href="{% url 'listar_hogares' %}"><i class="fa-solid fa-house"></i> Hogares</a>
+    <a href="{% url 'listar_madres' %}"><i class="fa-solid fa-user-group"></i> Madres</a>
+    <a href="{% url 'listar_administradores' %}"><i class="fa-solid fa-user-shield"></i> Administradores</a>
+    <a href="{% url 'admin_reportes' %}" class="active"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+    <div class="dropdown">
+      <a href="#"><i class="fa-solid fa-cog"></i> Ajustes</a>
+      <div class="dropdown-menu">
+        <a href="{% url 'editar_perfil' %}"><i class="fa-solid fa-user-pen"></i> Editar Perfil</a>
+        <a href="{% url 'cambiar_contrasena' %}"><i class="fa-solid fa-key"></i> Cambiar Contraseña</a>
+      </div>
+    </div>
+
+    <div class="logout">
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" style="background: none; border: none; color: white; cursor: pointer; padding: 14px 25px; display: flex; align-items: center; gap: 10px; font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 500; width: 100%; text-align: left;">
+                <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+            </button>
+        </form>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header>
+      <h1>Reportes</h1>
+      <span>Bienvenido, {{ user.nombres|default:'Admin' }}</span>
+    </header>
+
+    <div class="report-builder">
+      <!-- Reporte de Administradores -->
+      <div class="report-section">
+        <h3><i class="fa-solid fa-user-shield" style="margin-right: 10px;"></i>Reporte de Administradores</h3>
+        <form action="{% url 'reporte_administradores_excel' %}" method="get" target="_blank">
+          <div class="form-group">
+            <label for="admin_nombre">Nombre o Apellido</label>
+            <input type="text" name="nombre" id="admin_nombre" placeholder="Filtrar por nombre...">
+          </div>
+          <div class="form-group">
+            <label for="admin_documento">Documento</label>
+            <input type="text" name="documento" id="admin_documento" placeholder="Filtrar por documento...">
+          </div>
+          <div class="form-actions">
+            <button type="reset" class="btn-limpiar"><i class="fa-solid fa-eraser"></i> Limpiar</button>
+            <button type="submit" class="btn-reporte"><i class="fa-solid fa-file-excel"></i> Generar Excel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Reporte de Madres Comunitarias -->
+      <div class="report-section">
+        <h3><i class="fa-solid fa-user-group" style="margin-right: 10px;"></i>Reporte de Madres Comunitarias</h3>
+        <form action="{% url 'reporte_madres_excel' %}" method="get" target="_blank">
+          <div class="form-group">
+            <label for="madre_nombre">Nombre o Apellido</label>
+            <input type="text" name="nombre" id="madre_nombre" placeholder="Filtrar por nombre...">
+          </div>
+          <div class="form-group">
+            <label for="madre_hogar_asignado">Hogar Asignado</label>
+            <input type="text" name="hogar_asignado" id="madre_hogar_asignado" placeholder="Nombre del hogar...">
+          </div>
+          <div class="form-group">
+            <label for="madre_escolaridad">Nivel de Escolaridad</label>
+            <select name="escolaridad" id="madre_escolaridad">
+              <option value="">Todos</option>
+              {% for value, display_name in escolaridad_choices %}
+              <option value="{{ value }}">{{ display_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="reset" class="btn-limpiar"><i class="fa-solid fa-eraser"></i> Limpiar</button>
+            <button type="submit" class="btn-reporte"><i class="fa-solid fa-file-excel"></i> Generar Excel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Reporte de Hogares Comunitarios -->
+      <div class="report-section">
+        <h3><i class="fa-solid fa-house-chimney-user" style="margin-right: 10px;"></i>Reporte de Hogares Comunitarios</h3>
+        <form action="{% url 'reporte_hogares_excel' %}" method="get" target="_blank">
+          <div class="form-group">
+            <label for="hogar_nombre">Nombre del Hogar</label>
+            <input type="text" name="nombre_hogar" id="hogar_nombre" placeholder="Filtrar por nombre...">
+          </div>
+          <div class="form-group">
+            <label for="hogar_regional">Regional</label>
+            <select name="regional" id="hogar_regional">
+              <option value="">Todas</option>
+              {% for regional in regionales_filtro %}<option value="{{ regional.id }}">{{ regional.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="hogar_ciudad">Ciudad</label>
+            <input type="text" name="ciudad" id="hogar_ciudad" placeholder="Filtrar por ciudad...">
+          </div>
+          <div class="form-group">
+            <label for="hogar_madre_comunitaria">Madre Comunitaria</label>
+            <input type="text" name="madre_comunitaria" id="hogar_madre_comunitaria" placeholder="Nombre de la madre...">
+          </div>
+          <div class="form-group">
+            <label for="hogar_ninos_matriculados">Niños Matriculados</label>
+            <input type="number" name="ninos_matriculados" id="hogar_ninos_matriculados" placeholder="Número exacto...">
+          </div>
+          <div class="form-actions">
+            <button type="reset" class="btn-limpiar"><i class="fa-solid fa-eraser"></i> Limpiar</button>
+            <button type="submit" class="btn-reporte"><i class="fa-solid fa-file-excel"></i> Generar Excel</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const reportForms = document.querySelectorAll('.report-section form');
+      reportForms.forEach(form => {
+        form.addEventListener('submit', function() {
+          // Usamos un pequeño retraso para que el formulario se envíe antes de limpiarse
+          setTimeout(() => form.reset(), 500);
+        });
+      });
+    });
+  </script>
+</html>

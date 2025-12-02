@@ -1,0 +1,510 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Listado de Novedades - ICBF Conecta</title>
+  <link rel="stylesheet" href="{% static 'css/navbar_madre.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<style>
+
+/* ===========================
+   ESTILOS GENERALES
+=========================== */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background-color: #f4f7fb;
+    color: #333;
+}
+
+/* ===========================
+   HEADER COMPACTO
+=========================== */
+.mc-header {
+    background: #ffffff;
+    padding: 15px 30px;          /* Más pequeño */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0 0 18px 18px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* ---- Lado izquierdo ---- */
+.mc-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mc-header-left .mc-logo {
+    height: 60px;                /* Antes 60px, ahora más compacto */
+}
+
+.mc-title {
+    font-size: 22px;             /* Antes 26–32px */
+    font-weight: 700;
+    color: #003f91;
+    margin: 0;
+}
+
+/* ---- Centro ---- */
+.mc-header-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+}
+/* Hace que el menú del centro se vaya a la derecha */
+.mc-header-nav {
+    margin-left: auto;   /* Empuja los botones hacia la derecha */
+    margin-right: 20px;  /* Espacio antes del logout */
+    display: flex;
+    align-items: center;
+}
+/* Asegura alineación vertical perfecta */
+.mc-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.mc-header-nav a {
+    background: #eef4ff;
+    color: #003d80;
+    border: 1px solid #dbe7ff;
+    border-radius: 10px;
+    padding: 8px 14px;           /* Reducido */
+    font-size: 14px;             /* Más compacto */
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mc-header-nav a:hover {
+    background: #d9e6ff;
+    color: #002d66;
+}
+/* Quitar línea debajo del menú */
+.mc-header-nav ul,
+.mc-header-nav li {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.mc-header-nav a {
+    text-decoration: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+
+/* ---- Derecha ---- */
+.mc-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn {
+    background: linear-gradient(90deg,#0043c0,#006bff);
+    width: 40px;                 /* Antes 46px */
+    height: 40px;                /* Más compacto */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-radius: 10px;
+}
+
+
+/* --- Notificaciones como la captura --- */
+.notif-btn {
+  background: #eef4ff;
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.notif-btn:hover {
+  background:#d9e6ff;
+}
+/* --- Estilo del botón azul redondeado (logout) --- */
+.logout-btn {
+  background: linear-gradient(90deg,#0043c0,#006bff);
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  justify-content:center;
+  align-items:center;
+  font-size:20px;
+  border-radius:12px;
+  padding:0;
+}
+
+/* ===========================
+   TITULO PRINCIPAL
+=========================== */
+.main-title {
+    text-align: center;
+    font-size: 32px;
+    color: #0056d6;
+    margin-top: 35px;
+}
+
+/* ===========================
+   BOTÓN PRINCIPAL
+=========================== */
+.btn {
+    background-color: #0056d6;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #003c9e;
+}
+
+.btn-secondary {
+    background: #777;
+}
+
+.btn-secondary:hover {
+    background: #555;
+}
+
+/* ===========================
+   FORMULARIO DE BÚSQUEDA
+=========================== */
+.busqueda-form {
+    text-align: center;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.busqueda-input {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 250px;
+}
+
+/* ===========================
+   TABLA
+=========================== */
+.card {
+    background: #ffffff;
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 25px;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: #0056d6;
+    color: white;
+}
+
+.table th {
+    padding: 14px;
+    text-align: left;
+    font-size: 15px;
+}
+
+.table tbody tr {
+    background: #f5f9ff;
+    border-bottom: 1px solid #e3e8f0;
+}
+
+.table td {
+    padding: 12px;
+}
+
+.table tbody tr:hover {
+    background: #e8f1ff;
+}
+
+/* ===========================
+   MENÚ DE OPCIONES (...)
+=========================== */
+.menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-trigger {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+.menu-options {
+    display: none;
+    position: absolute;
+    right: 0;
+    min-width: 180px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    padding: 10px 0;
+    z-index: 50;
+}
+
+.menu-container:hover .menu-options {
+    display: block;
+}
+
+.menu-options a {
+    display: block;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.menu-options a:hover {
+    background: #eef4ff;
+    color: #0056d6;
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+    margin-top: 30px;
+    background: transparent;
+    font-size: 14px;
+    color: #5b2fa6;
+    text-align: center;
+    padding: 25px 0;
+}
+/* HEADER GENERAL */
+.top-header {
+    background: #ffffff;
+    padding: 15px 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* IZQUIERDA: Logo + Nombre */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left .logo {
+    height: 55px;
+}
+
+.header-left .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #003f91;
+}
+
+/* CENTRO: Botones */
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-btn {
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 12px;
+    transition: 0.25s;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Azul claro como en la imagen */
+.light-btn {
+    background: #e9f1ff;
+    color: #0048af;
+    border: 1px solid #cddfff;
+}
+
+.light-btn:hover {
+    background: #d4e5ff;
+}
+
+/* DERECHA: Campana + Logout */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Icono de notificación */
+.notification-icon {
+    position: relative;
+    font-size: 22px;
+    color: #006bff;
+    cursor: pointer;
+}
+
+.notification-icon .badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* Botón azul de cerrar sesión */
+.logout-square {
+    width: 45px;
+    height: 45px;
+    background: #0069ff;
+    border: none;
+    color: white;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: 0.2s;
+}
+
+.logout-square:hover {
+    background: #0051c8;
+}
+
+</style>
+<body>
+    {% include 'madre/navbar_madre.html' %}
+    
+
+
+
+  <div style="position: fixed; inset: 0; background-color: rgba(0,0,0,0.050); z-index: -1;"></div>
+  <!-- contenido aquí -->
+
+
+
+</form>
+
+
+
+
+  <h2 class="main-title">Listado de Novedades</h2>
+
+  <div style="text-align: center; margin-bottom: 20px;">
+  <a href="{% url 'novedades:novedades_create' %}" class="btn btn-primary">Registrar nueva novedad</a>
+
+</div>
+
+
+<!-- filtro de busqueda por fecha -->
+<form method="get" class="busqueda-form">
+  <input type="text" name="q" placeholder="Buscar novedad..." value="{{ query }}" class="busqueda-input">
+  <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+  <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+  <button type="submit" class="btn">Filtrar</button>
+  <a href="{% url 'novedades:novedades_list' %}" class="btn btn-secondary">Limpiar filtros</a>
+</form>
+|
+
+
+
+  <div class="card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Niño</th>
+         
+          <th>Tipo</th>
+          <th>Prioridad</th>
+          
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for novedad in novedades %}
+        <tr>
+          <td>{{ novedad.fecha|date:"d/m/Y" }}</td>
+          <td>{{ novedad.nino }}</td>
+
+          <td>{{ novedad.get_tipo_display }}</td>
+          <td>Prioridad: {{ novedad.get_prioridad }}</td>
+          <!-- TEMA DE PRIORIDAD -->
+          <td>{{ novedad.descripcion|truncatechars:50 }}</td>
+          <td>
+            <div class="menu-container">
+              <button class="menu-trigger">⋯</button>
+              <div class="menu-options">
+                <a href="{% url 'novedades:detalle' novedad.id %}">Ver detalle simple</a>
+
+                <a href="{% url 'novedades:novedades_edit' novedad.pk %}">Editar</a>
+                <a href="{% url 'novedades:novedades_delete' novedad.pk %}" style="color: red;">Eliminar</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7">No hay novedades registradas.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if novedades|length == 0 %}
+  <p>No se encontraron novedades que coincidan con "{{ query }}".</p>
+{% endif %}
+
+
+
+  </div>
+
+  <footer style="text-align: center; padding: 20px; color: #7a3eb1; font-size: 14px;">
+  © 2025 ICBF Conecta. Todos los derechos reservados.
+</footer>
+
+
+</body>
+</html>
+
+<script>
+  //para confirmar logout
+  function confirmarLogout() {
+    return confirm("¿Seguro que quieres cerrar sesión?");
+  }
+</script>
+
+

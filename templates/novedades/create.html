@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Novedad - ICBF Conecta</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+<style>
+
+/* ===========================
+   ESTILOS GENERALES
+=========================== */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background: #f4f7fc;
+    padding-bottom: 40px;
+}
+
+/* ===========================
+   TITULO PRINCIPAL
+=========================== */
+.main-title {
+    text-align: center;
+    font-size: 30px;
+    color: #0051d4;
+    margin-top: 40px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* ===========================
+   TARJETA DEL FORMULARIO
+=========================== */
+.form-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 600px;
+    margin: 35px auto;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===========================
+   CAMPOS DEL FORMULARIO
+=========================== */
+form p {
+    margin-bottom: 20px;
+}
+
+form label {
+    font-weight: 600;
+    color: #003a99;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #c7d7ff;
+    border-radius: 10px;
+    background: #f4f7ff;
+    margin-top: 5px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+form textarea {
+    min-height: 110px;
+}
+
+/* ===========================
+   BOTÓN GUARDAR
+=========================== */
+.btn-guardar {
+    width: 100%;
+    background: linear-gradient(90deg,#0043c0,#006bff);
+    color: white;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: 0.2s ease-in-out;
+}
+
+.btn-guardar:hover {
+    background: #0049d1;
+    transform: scale(1.02);
+}
+
+/* ===========================
+   BOTÓN REGRESAR
+=========================== */
+.btn-regresar {
+    display: block;
+    text-align: center;
+    background: #8a8a8a;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 15px;
+    transition: 0.2s;
+}
+
+.btn-regresar:hover {
+    background: #6a6a6a;
+    transform: scale(1.02);
+}
+
+</style>
+</head>
+
+<body>
+
+<h2 class="main-title">Registrar Nueva Novedad</h2>
+
+<div class="form-card">
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn-guardar">Guardar Novedad</button>
+
+        <a href="{% url 'novedades:novedades_list' %}" class="btn-regresar">
+            Regresar a novedades
+        </a>
+    </form>
+
+</div>
+
+</body>
+</html>

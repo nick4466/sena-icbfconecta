@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      margin: 40px;
+      color: #333;
+      background-color: #f9f9f9;
+    }
+
+    /* Encabezado */
+    .header {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #7a3eb1;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      color: #7a3eb1;
+      font-size: 24pt;
+      margin: 0;
+    }
+    .header p {
+      font-size: 12pt;
+      color: #555;
+    }
+
+    /* Tabla */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 11pt;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: linear-gradient(135deg, #9B59B6, #7a3eb1);
+      color: rgb(0, 0, 0);
+      text-transform: uppercase;
+      font-size: 10pt;
+      letter-spacing: 0.5px;
+    }
+    tr:nth-child(even) { background-color: #fdf6ff; }
+    tr:hover { background-color: #f3e9ff; }
+
+    /* Estados */
+    .estado-presente { color: #2ecc71; font-weight: bold; }
+    .estado-ausente { color: #e74c3c; font-weight: bold; }
+    .estado-justificado { color: #7a3eb1; font-weight: bold; }
+
+    /* Resumen */
+    .resumen {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 12pt;
+      font-weight: bold;
+      color: #444;
+    }
+    .resumen span {
+      margin: 0 15px;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+    .resumen .presente { background-color: #d4f8e8; }
+    .resumen .ausente { background-color: #f8d4d4; }
+    .resumen .justificado { background-color: #e8d4f8; }
+
+    /* Footer */
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 10pt;
+      color: #777;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Historial de Asistencia</h1>
+    <p><strong>Niño:</strong> {{ nino.nombres }} {{ nino.apellidos }}</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in historial %}
+        <tr>
+          <td>{{ a.fecha|date:"d/m/Y" }}</td>
+          <td>
+            {% if a.estado == "Presente" %}
+              <span class="estado-presente">Presente</span>
+            {% elif a.estado == "Ausente" %}
+              <span class="estado-ausente">Ausente</span>
+            {% elif a.estado == "Justificado" %}
+              <span class="estado-justificado">Justificado</span>
+            {% else %}
+              {{ a.estado }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="resumen">
+    <span class="presente">Presente: {{ presentes }}</span>
+    <span class="ausente">Ausente: {{ ausentes }}</span>
+    <span class="justificado">Justificado: {{ justificados }}</span>
+  </div>
+
+  <div class="footer">
+    📄 Reporte generado automáticamente por ICBF Conecta
+  </div>
+</body>
+</html>

@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Historial de Asistencia - {{ nino.nombres }} {{ nino.apellidos }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #c0c0c07b;   
+  
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background-color: rgba(241, 240, 240, 0.575);
+      padding: 30px;
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    h1, h4 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    h1 { color: #3e23a0; }
+    h4 { color: #272727; }
+
+    p {
+      text-align: center;
+      font-size: 18px;
+      color: #18407e;
+      margin-bottom: 20px;
+    }
+
+    /* ---------- Layout horizontal ---------- */
+    .contenido-horizontal {
+      display: flex;
+      gap: 30px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .bloque-calendario { flex: 1 1 45%; min-width: 300px; }
+    .bloque-tabla { flex: 1 1 50%; min-width: 300px; }
+
+    /* ---------- Tabla compacta ---------- */
+    .tabla-compacta {
+      width: 100%;
+      font-size: 14px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .tabla-compacta th {
+      background: linear-gradient(135deg, #1800b4, #7a3eb1);
+      color: white;
+      font-weight: bold;
+      padding: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tabla-compacta td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #e5d5f5;
+    }
+
+    .tabla-compacta tr:nth-child(even) { background-color: #fdf6ff; }
+    .tabla-compacta tr:hover { background-color: #f3e9ff; transition: 0.3s; }
+
+    /* ---------- Estados ---------- */
+    .estado-presente { color: #2ecc71; font-weight: bold; }
+    .estado-ausente { color: #e74c3c; font-weight: bold; }
+    .estado-justificado { color: #7a3eb1; font-weight: bold; }
+
+    /* ---------- Botón volver ---------- */
+    .volver {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 16px;
+      background-color: #0017af;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .volver:hover { background-color: #1919a0; }
+
+    /* ---------- Resumen ---------- */
+    .resumen {
+      text-align: center;
+      margin: 15px 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .resumen span { margin: 0 10px; }
+
+    /* ---------- Gráfico de barras ---------- */
+    .grafico {
+      display: flex;
+      height: 30px;
+      margin: 20px auto;
+      max-width: 600px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-weight: bold;
+      color: white;
+      text-align: center;
+    }
+    .barra {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      animation: expand 0.6s ease-out;
+    }
+.barra.presente { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+.barra.ausente { background: linear-gradient(135deg, #c0392b, #e74c3c); }
+.barra.justificado { background: linear-gradient(135deg, #8e44ad, #7a3eb1); }
+
+
+    @keyframes expand {
+      from { flex-grow: 0; opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ---------- Calendario ---------- */
+    #calendar {
+      max-width: 100%;
+      min-height: 400px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 10px;
+      background-color: #fff;
+    }
+
+    /* ---------- Leyenda ---------- */
+    .leyenda {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 16px;
+      text-align: center;
+    }
+
+
+
+    /* ---------- Estilos para el filtro ---------- */
+  .filtro-fechas {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filtro-fechas label {
+  font-weight: bold;
+  color: #7a3eb1;
+  margin-right: 5px;
+}
+
+.filtro-fechas input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.filtro-fechas input[type="date"]:focus {
+  border-color: #7a3eb1;
+  outline: none;
+}
+
+.filtro-fechas button {
+  background-color: #7a3eb1;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.filtro-fechas button:hover {
+  background-color: #5a2a85;
+}
+
+
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Historial de Asistencia</h1>
+  <p><strong>Niño:</strong> {{ nino.nombres }} {{ nino.apellidos }}</p>
+
+  <!-- Filtro por fechas -->
+<form method="get" class="filtro-fechas">
+  <label>Desde:</label>
+  <input type="date" name="start_date" value="{{ start_date }}">
+  <label>Hasta:</label>
+  <input type="date" name="end_date" value="{{ end_date }}">
+  <button type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+  <a href="{% url 'historial_asistencia' nino.id %}" class="btn btn-secondary">Limpiar</a>
+</form>
+
+
+  <!-- Layout horizontal -->
+  <div class="contenido-horizontal">
+    <!-- Calendario -->
+    <div class="bloque-calendario">
+      <h4>Resumen en calendario</h4>
+      <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+      <div id="calendar"></div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="bloque-tabla">
+      <h4>Historial detallado</h4>
+      {% if historial %}
+        <table class="tabla-compacta">
+          <thead>
+            <tr><th>Fecha</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            {% for a in historial %}
+              <tr>
+                <td>{{ a.fecha|date:"d/m/Y" }}</td>
+                <td>
+                  {% if a.estado == "Justificado" and a.novedad_id %}
+                    <a href="{% url 'novedades:novedades_detail' a.novedad_id %}" class="estado-justificado">Justificado</a>
+                  {% elif a.estado == "Presente" %}
+                    <span class="estado-presente">Presente</span>
+                  {% elif a.estado == "Ausente" %}
+                    <span class="estado-ausente">Ausente</span>
+                  {% else %}
+                    {{ a.estado }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No hay registros de asistencia en el rango seleccionado.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Resumen numérico -->
+  <div class="resumen">
+    <span class="estado-presente">Presente: {{ presentes }}</span> |
+    <span class="estado-ausente">Ausente: {{ ausentes }}</span> |
+    <span class="estado-justificado">Justificado: {{ justificados }}</span>
+  </div>
+
+  <!-- Gráfico de barras -->
+  <div class="grafico">
+    <div class="barra presente" style="width: {{ porc_presentes }}%">{{ porc_presentes }}%</div>
+    <div class="barra ausente" style="width: {{ porc_ausentes }}%">{{ porc_ausentes }}%</div>
+    <div class="barra justificado" style="width: {{ porc_justificados }}%">{{ porc_justificados }}%</div>
+  </div>
+
+  <!-- Botón volver -->
+  <a href="{% url 'asistencia_form' %}" class="volver"><i class="fas fa-arrow-left"></i> Volver</a>
+  <a href="{% url 'historial_pdf' nino.id %}" class="volver">
+  <i class="fas fa-file-pdf"></i> Descargar PDF
+</a>
+
+</div>
+
+<!-- Script calendario -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',   // Vista inicial: mes
+      locale: 'es',                  // Idioma español
+      headerToolbar: {
+        left: 'prev,next today',     // Botones de navegación
+        center: 'title',             // Título del mes/año
+        right: ''                    // Sin botones extra
+      },
+      events: {{ eventos_json|safe }},  // Eventos pasados desde Django
+      eventClick: function(info) {
+        alert("📅 Fecha: " + info.event.startStr + "\n📌 Estado: " + info.event.title);
+      }
+    });
+    calendar.render();
+  });
+</script>
+</body>
+</html>

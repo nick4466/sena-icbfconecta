@@ -1,0 +1,358 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen Integral de {{ nino.nombres }} {{ nino.apellidos }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-image: url("{% static 'img/fondito.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.97);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(155,89,182,0.10);
+    }
+    h1 {
+      text-align: center;
+      color: #7a3eb1;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 24px;
+      color: #5e3370;
+      margin-top: 40px;
+      margin-bottom: 18px;
+      border-bottom: 2px solid #f3c1e5;
+      padding-bottom: 8px;
+      text-align: left;
+    }
+    .info-block {
+      background: linear-gradient(90deg, #f3e7ff 0%, #e8d8f9 100%);
+      border-radius: 12px;
+      padding: 18px 28px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.07);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .info-block i {
+      font-size: 32px;
+      color: #7a3eb1;
+      margin-right: 10px;
+    }
+    .filter-card {
+      background: #f8f6fa;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.07);
+      padding: 22px 28px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .filter-card label {
+      font-weight: 600;
+      color: #7a3eb1;
+      margin-right: 8px;
+    }
+    .filter-card select, .filter-card input[type="date"] {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #d7bbe8;
+      font-size: 15px;
+      margin-right: 12px;
+      background: #fff;
+      color: #5e3370;
+    }
+    .filter-card .button {
+      background-color: #9B59B6;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 10px 20px;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.08);
+      transition: background-color 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    .summary-table th {
+      background-color: #f3c1e5;
+      color: #5e3370;
+      padding: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .summary-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+    }
+    .summary-table tbody tr:hover {
+      background-color: #f9e6ff;
+    }
+    .empty-row td {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+      color: #777;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      background: #e5d5f5;
+      color: #7a3eb1;
+      margin-right: 8px;
+    }
+    .novedad-prioridad-5 { background: #e74c3c; color: #fff; }
+    .novedad-prioridad-4 { background: #f39c12; color: #fff; }
+    .novedad-prioridad-3 { background: #f7ca18; color: #5e3370; }
+    .novedad-prioridad-2 { background: #48c9b0; color: #fff; }
+    .novedad-prioridad-1 { background: #7a3eb1; color: #fff; }
+    .dimension-block {
+      background: #faf6ff;
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.06);
+    }
+    .dimension-block h3 {
+      color: #7a3eb1;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .dimension-block p {
+      margin: 0 0 8px 0;
+      color: #444;
+      font-size: 15px;
+    }
+    .blockquote {
+      background: #f8f6fa;
+      border-left: 4px solid #c3a3e0;
+      border-radius: 6px;
+      padding: 12px 18px;
+      font-style: italic;
+      color: #333;
+      margin: 12px 0;
+    }
+    .btn-back {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 22px;
+      background-color: #6c757d;
+      color: white;
+      text-decoration: none;
+      border-radius: 7px;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.08);
+      transition: background-color 0.3s;
+    }
+    .btn-back:hover {
+      background-color: #8e44ad;
+    }
+    @media (max-width: 900px) {
+      .filter-card { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+      <h1 style="flex:1; text-align:center; margin:0; color:#7a3eb1; font-size:32px;">Resumen Integral de {{ nino.nombres }} {{ nino.apellidos }}</h1>
+      <a href="{% url 'gestion_ninos' %}" class="btn-back" style="margin-left:24px;">
+        <i class="fas fa-arrow-left"></i> Volver a Gestión de Niños
+      </a>
+    </div>
+    <div class="info-block">
+      <i class="fas fa-user-graduate"></i>
+      <div>
+        <b>Documento:</b> {{ nino.documento|default:"N/A" }}<br>
+        <b>Fecha de generación:</b> {% now "Y-m-d H:i" %}
+      </div>
+    </div>
+
+    <!-- FORMULARIO DE FILTRO PARA REPORTE -->
+    <form method="get" action="" class="filter-card">
+      <div>
+        <label for="tipo_reporte"><b>Tipo de reporte:</b></label>
+        <select name="tipo_reporte" id="tipo_reporte" onchange="this.form.submit()">
+          <option value="ambos" {% if not request.GET.tipo_reporte or request.GET.tipo_reporte == 'ambos' %}selected{% endif %}>Todos</option>
+          <option value="seguimiento" {% if request.GET.tipo_reporte == 'seguimiento' %}selected{% endif %}>Seguimiento Diario</option>
+          <option value="novedades" {% if request.GET.tipo_reporte == 'novedades' %}selected{% endif %}>Novedades</option>
+          <option value="desarrollo" {% if request.GET.tipo_reporte == 'desarrollo' %}selected{% endif %}>Desarrollo Mensual</option>
+        </select>
+      </div>
+      <div>
+        <label for="fecha_inicio"><b>Desde:</b></label>
+        <input type="date" name="fecha_inicio" id="fecha_inicio" value="{{ request.GET.fecha_inicio }}">
+      </div>
+      <div>
+        <label for="fecha_fin"><b>Hasta:</b></label>
+        <input type="date" name="fecha_fin" id="fecha_fin" value="{{ request.GET.fecha_fin }}">
+      </div>
+      <button type="submit" class="button" title="Filtrar información en la página" style="background-color: #9B59B6;">
+        <i class="fas fa-filter"></i>  Filtrar
+      </button>
+      <button type="submit" class="button" formaction="{% url 'desarrollo:generar_reporte_pdf' nino.id %}" title="Generar reporte en PDF con los filtros seleccionados" style="background-color: #9B59B6;">
+        <i class="fas fa-file-pdf"></i>  Generar PDF
+      </button>
+      <a href="{% url 'desarrollo:reporte_resumen' nino.id %}" class="button" style="background-color: #6c757d;" title="Limpiar todos los filtros">
+        <i class="fas fa-broom"></i>   Limpiar
+      </a>
+    </form>
+
+    {% if request.GET.tipo_reporte or request.GET.fecha_inicio or request.GET.fecha_fin %}
+      <div style="background:#f3e7ff; border-radius:10px; padding:16px 24px; margin-bottom:18px; box-shadow:0 2px 8px rgba(155,89,182,0.07);">
+        <b>Filtros aplicados:</b>
+        <ul style="margin:8px 0 0 18px; color:#7a3eb1;">
+          <li><b>Tipo de reporte:</b> 
+            {% if request.GET.tipo_reporte %}
+              {% if request.GET.tipo_reporte == "ambos" %}Todos{% elif request.GET.tipo_reporte == "seguimiento" %}Seguimiento Diario{% elif request.GET.tipo_reporte == "novedades" %}Novedades{% elif request.GET.tipo_reporte == "desarrollo" %}Desarrollo Mensual{% else %}{{ request.GET.tipo_reporte }}{% endif %}
+            {% else %}
+              Todos
+            {% endif %}
+          </li>
+          <li><b>Desde:</b> {{ request.GET.fecha_inicio|default:"Todas las fechas" }}</li>
+          <li><b>Hasta:</b> {{ request.GET.fecha_fin|default:"Todas las fechas" }}</li>
+        </ul>
+      </div>
+    {% endif %}
+
+    <!-- SEGUIMIENTO DIARIO -->
+    {% if not request.GET.tipo_reporte or request.GET.tipo_reporte == 'ambos' or request.GET.tipo_reporte == 'seguimiento' %}
+    <div class="section-title" id="seguimiento-diario"><i class="fas fa-star"></i> Seguimiento Diario</div>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Planeación</th>
+          <th>Comportamiento</th>
+          <th>Estado Emocional</th>
+          <th>Valoración</th>
+          <th>Observaciones</th>
+          <th>Evaluación Dimensiones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for seguimiento in seguimientos %}
+        <tr>
+          <td>{{ seguimiento.fecha|date:"Y-m-d" }}</td>
+          <td>{{ seguimiento.planeacion.nombre_experiencia|default:"N/A" }}</td>
+          <td>{{ seguimiento.get_comportamiento_general_display }}</td>
+          <td>{{ seguimiento.get_estado_emocional_display }}</td>
+          <td>
+            {% for i in "12345" %}{% if forloop.counter <= seguimiento.valoracion %}★{% else %}<span style="color:#ddd;">★</span>{% endif %}{% endfor %}
+          </td>
+          <td>{{ seguimiento.observaciones|default:"-" }}</td>
+          <td>
+            {% for eval in seguimiento.evaluaciones_dimension.all %}
+              <p style="margin: 2px 0; font-size: 13px;"><b>{{ eval.dimension.nombre }}:</b> {{ eval.get_desempeno_display }}</p>
+            {% empty %}
+              Sin evaluación.
+            {% endfor %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row">
+          <td colspan="5">No hay seguimientos diarios registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <!-- NOVEDADES -->
+    {% if not request.GET.tipo_reporte or request.GET.tipo_reporte == 'ambos' or request.GET.tipo_reporte == 'novedades' %}
+    <div class="section-title" id="novedades"><i class="fas fa-exclamation-triangle"></i> Novedades Registradas</div>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Tipo</th>
+          <th>Prioridad</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for novedad in novedades %}
+        <tr>
+          <td>{{ novedad.fecha|date:"Y-m-d" }}</td>
+          <td>{{ novedad.get_tipo_display }}</td>
+          <td>
+            <span class="badge novedad-prioridad-{{ novedad.get_prioridad }}">{{ novedad.get_prioridad }}</span>
+          </td>
+          <td>{{ novedad.descripcion|default:"-"|truncatewords:12 }}</td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row">
+          <td colspan="4">No hay novedades registradas para este niño.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+    <!-- DESARROLLO MENSUAL -->
+    {% if not request.GET.tipo_reporte or request.GET.tipo_reporte == 'ambos' or request.GET.tipo_reporte == 'desarrollo' %}
+    <div class="section-title" id="desarrollo-mensual"><i class="fas fa-chart-line"></i> Desarrollo Mensual</div>
+    {% for desarrollo in desarrollos %}
+    <div class="dimension-block">
+      <h3>{{ desarrollo.fecha_fin_mes|date:"F Y" }} — Logro: <span class="badge">{{ desarrollo.logro_mes|default:"N/A" }}</span></h3>
+      <p><b>Tendencia:</b> {{ desarrollo.tendencia_valoracion|default:"-" }}</p>
+      <p><b>Participación frecuente:</b> {{ desarrollo.get_participacion_frecuente_display|default:"-" }}</p>
+      <p><b>Comportamiento frecuente:</b> {{ desarrollo.get_comportamiento_frecuente_display|default:"-" }}</p>
+      <p><b>Porcentaje de asistencia:</b> {{ desarrollo.porcentaje_asistencia|default:"N/A" }}%</p>
+      <hr>
+      <h4 style="color:#7a3eb1; margin-bottom: 10px;">Evaluación por Dimensiones</h4>
+      <p><b>Cognitiva:</b> {{ desarrollo.evaluacion_cognitiva|default:"Sin información" }}</p>
+      <p><b>Comunicativa:</b> {{ desarrollo.evaluacion_comunicativa|default:"Sin información" }}</p>
+      <p><b>Socio-afectiva:</b> {{ desarrollo.evaluacion_socio_afectiva|default:"Sin información" }}</p>
+      <p><b>Corporal:</b> {{ desarrollo.evaluacion_corporal|default:"Sin información" }}</p>
+      <hr>
+      <div class="blockquote"><b>Fortalezas:</b> <br>{{ desarrollo.fortalezas_mes|linebreaksbr|default:"-" }}</div>
+      <div class="blockquote"><b>Aspectos a Mejorar:</b> <br>{{ desarrollo.aspectos_a_mejorar|linebreaksbr|default:"-" }}</div>
+      <div class="blockquote"><b>Alertas:</b> <br>{{ desarrollo.alertas_mes|linebreaksbr|default:"-" }}</div>
+      <div class="blockquote"><b>Conclusión:</b> <br>{{ desarrollo.conclusion_general|linebreaksbr|default:"-" }}</div>
+    </div>
+    {% empty %}
+    <div class="dimension-block">
+      <p>No hay registros de desarrollo para este niño.</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+</body>
+</html>

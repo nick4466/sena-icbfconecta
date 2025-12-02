@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% if form.instance.pk %}Editar{% else %}Registrar{% endif %} Novedad</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+<style>
+
+/* ===========================
+   ESTILO GENERAL
+=========================== */
+body {
+    margin: 0;
+    padding: 0;
+    background: #eef3ff;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* ===========================
+   HEADER LIMPIO
+=========================== */
+header {
+    display: flex;
+    justify-content: center;
+    padding: 18px 0;
+    background: #ffffff;
+    box-shadow: 0px 2px 12px rgba(0,0,0,0.1);
+    border-radius: 0 0 20px 20px;
+}
+
+header img {
+    height: 60px;
+}
+
+/* ===========================
+   BOTÓN VOLVER FLOTANTE
+=========================== */
+.btn-volver {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: #0d47ff;
+    padding: 10px 18px;
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.12);
+    transition: 0.25s;
+}
+
+.btn-volver:hover {
+    background: #0039cc;
+    transform: translateX(-3px);
+}
+
+/* ===========================
+   TÍTULO PRINCIPAL
+=========================== */
+.main-title {
+    text-align: center;
+    font-size: 32px;
+    margin-top: 30px;
+    color: #0f3ea3;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* ===========================
+   FORMULARIO EN TARJETA
+=========================== */
+.form-card {
+    width: 92%;
+    max-width: 650px;
+    margin: 35px auto;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    padding: 35px 28px;
+    border-radius: 22px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.12);
+}
+
+/* Inputs */
+form p {
+    margin-bottom: 20px;
+}
+
+form label {
+    font-weight: 600;
+    color: #1e3fa6;
+    margin-bottom: 6px;
+    display: block;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    border-radius: 12px;
+    border: 1px solid #c6d4ff;
+    background: #f6f8ff;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #4c80ff;
+    box-shadow: 0 0 0 3px rgba(76,128,255,0.25);
+}
+
+/* ===========================
+   BOTONES ACCIÓN
+=========================== */
+.btn-group {
+    margin-top: 25px;
+    display: flex;
+    gap: 18px;
+}
+
+.btn-success {
+    flex: 1;
+    background: linear-gradient(90deg, #0053d9, #2979ff);
+    color: white;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0px 5px 15px rgba(0,91,255,0.25);
+    transition: 0.25s;
+}
+
+.btn-success:hover {
+    transform: scale(1.03);
+    background: #0044b0;
+}
+
+.btn-secondary {
+    flex: 1;
+    background: #7b7b7b;
+    color: white;
+    padding: 13px 20px;
+    border-radius: 14px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+    transition: 0.25s;
+}
+
+.btn-secondary:hover {
+    background: #5a5a5a;
+    transform: scale(1.03);
+}
+
+</style>
+</head>
+<body>
+
+<a href="{% url 'novedades:novedades_list' %}" class="btn-volver">
+    <i class="fas fa-arrow-left"></i> Volver
+</a>
+
+<header>
+    <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo del Software">
+</header>
+
+<h2 class="main-title">
+    {% if form.instance.pk %}Editar{% else %}Registrar{% endif %} Novedad
+</h2>
+
+<div class="form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="btn-group">
+            <button type="submit" class="btn-success">Guardar</button>
+            <a href="{% url 'novedades:novedades_list' %}" class="btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

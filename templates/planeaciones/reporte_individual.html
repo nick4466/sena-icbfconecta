@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<style>
+
+@page {
+    size: A4 landscape;
+    margin: 18px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+
+/* LOGO */
+.logo-container {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.logo {
+    width: 140px;
+    height: auto;
+}
+
+/* TÍTULO */
+.titulo {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6c3483;
+    margin-bottom: 14px;
+}
+
+/* TABLA BASE */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.table th {
+    background: #7d3c98;
+    color: white;
+    padding: 10px;
+    border: 1px solid #5b2c6f;
+    text-align: left;
+    width: 140px;
+    font-size: 14px;
+}
+
+.table td {
+    border: 1px solid #c39bd3;
+    padding: 6px;
+    background: #f8f3f9;
+    text-align: justify;
+    font-size: 15px;
+}
+
+/* DOCUMENTACIÓN */
+.doc-title {
+    background: #7d3c98;
+    color: white;
+    padding: 8px;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.doc-img {
+    width: 195px;
+    height: auto;
+    margin: 6px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+.doc-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+</style>
+
+</head>
+<body>
+
+<!-- LOGO -->
+<div class="logo-container">
+    <img class="logo" src="core/static/img/logoSinFondo.png">
+</div>
+
+<div class="titulo">Detalle de Planeación {{ planeacion.nombre_experiencia }}</div>    
+
+<!-- CABECERA -->
+<table class="table">
+    <tr>
+        <th>Fecha</th>
+        <td>{{ planeacion.fecha }}</td>
+    </tr>
+    <tr>
+        <th>Experiencia</th>
+        <td>{{ planeacion.nombre_experiencia }}</td>
+    </tr>
+    <tr>
+        <th>Intencionalidad</th>
+        <td>{{ planeacion.intencionalidad_pedagogica }}</td>
+    </tr>
+</table>
+
+<!-- CONTENIDO INFORMATIVO -->
+<table class="table">
+    <tr>
+        <th>Materiales</th>
+        <td>{{ planeacion.materiales_utilizar }}</td>
+    </tr>
+    <tr>
+        <th>Ambiente</th>
+        <td>{{ planeacion.ambiente_educativo }}</td>
+    </tr>
+    <tr>
+        <th>Inicio</th>
+        <td>{{ planeacion.experiencia_inicio }}</td>
+    </tr>
+    <tr>
+        <th>Desarrollo</th>
+        <td>{{ planeacion.experiencia_pedagogica }}</td>
+    </tr>
+    <tr>
+        <th>Cierre</th>
+        <td>{{ planeacion.cierre_experiencia }}</td>
+    </tr>
+    <tr>
+        <th>Observaciones</th>
+        <td>{{ planeacion.situaciones_presentadas }}</td>
+    </tr>
+</table>
+<td>
+
+</td>
+<!-- DOCUMENTACIÓN -->
+<div class="doc-title">Documentación Fotográfica</div>
+
+{% if imagenes %}
+                {% for img in imagenes %}
+                    <img class="doc-img" src="{{ BASE_URL }}{{ img.imagen.url }}">
+                {% endfor %}
+            {% else %}
+                No hay documentación
+ {% endif %}
+
+</body>
+</html>

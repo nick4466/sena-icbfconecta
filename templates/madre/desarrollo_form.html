@@ -1,0 +1,436 @@
+{% load static %}
+{% load alertas_filters %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Desarrollo de Niños</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+    }
+
+
+
+    .main-title {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #7a3eb1;
+      background-color: #f3c4ffb3;
+      margin: 20px auto;
+      width: 80%;
+      border-radius: 10px;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      font-size: 22px;
+      color: #9B59B6;
+      margin-bottom: 10px;
+    }
+
+    h4 {
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: #5e3370;
+    }
+
+    /* form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    } */
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 14px;
+      padding: 30px;
+      backdrop-filter: blur(3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      border-left: 8px solid #9B59B6;
+    }
+
+    .info-card {
+      background-color: #faf6fd;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      border: 1px solid #e5d5f5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+
+    input[type="month"], input[type="text"][disabled] {
+      width: 75%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"][disabled] { background-color: #f1f3f4; color: #555; }
+    input:focus{
+      border-color: #9B59B6;
+      outline: none;
+      background-color: #f0f8ff;
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      transition: border-color 0.3s eanse;
+    }
+
+     .card h2 {
+      color: #9B59B6;
+      margin-bottom: 25px;
+      font-size: 27px;
+      text-align: center;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .botones {
+      display: block;
+      width: 100%;
+      background-color: #9B59B6;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      align-self: center;
+      margin-top: 20px;
+    }
+
+    .botones:hover {
+      background-color: #8e44ad;
+    }
+  
+  input[type="text"][value="{{ nino_preseleccionado.nombres }} {{ nino_preseleccionado.apellidos }}"], 
+  select[name="nino"] {
+    width: 95%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
+    .mensaje-exito {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .required-star {
+      color: #e74c3c;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    /* Estilos para las estrellas */
+    .rating-stars {
+      display: flex;
+      flex-direction: row-reverse; /* Para que el hover funcione de derecha a izquierda */
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .rating-stars input[type="radio"] {
+      display: none;
+    }
+    .rating-stars label {
+      font-size: 2.5rem;
+      color: #ddd;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .rating-stars input[type="radio"]:checked ~ label,
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label {
+      color: #f5b301;
+    }
+    /* Para que al quitar el hover, las estrellas seleccionadas permanezcan coloreadas */
+    .rating-stars input[type="radio"]:checked ~ label:hover,
+    .rating-stars input[type="radio"]:checked ~ label:hover ~ label {
+      color: #f5b301;
+    }
+
+    .rating-labels {
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.8rem;
+      color: #666;
+      padding: 0 20px;
+    }
+    .rating-labels span {
+      width: 50px; text-align: center;
+    }
+    .error-container {
+      color: #721c24;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  {% include 'madre/navbar_madre.html' %}
+
+  <div class="main-title">ICBF - CONECTA | {{ titulo_form }}</div>
+  <div class="contenedor">
+    {% if request.GET.exito %}
+    <div class="mensaje-exito" id="mensajeExito">¡Registro guardado exitosamente!</div>
+    {% endif %}
+    {% if error %}
+    <p style="color: red; text-align: center;">{{ error }}</p>
+    {% endif %}
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2 style="margin: 0;"><i class="fas fa-file-alt"></i> {{ titulo_form }}</h2>
+        <a href="{% url 'desarrollo:listar_desarrollos' %}{% if desarrollo %}?nino={{ desarrollo.nino.id }}{% elif nino_preseleccionado %}?nino={{ nino_preseleccionado.id }}{% endif %}" class="botones" style="margin: 0; font-weight: bold; text-decoration: none; width: auto; padding: 10px 20px; font-size: 16px; background-color: #6c757d;"">
+          <i class="fas fa-arrow-left"></i> Volver al listado
+        </a>
+      </div>
+      <p style="text-align: center; color: #555; margin-top: -15px; margin-bottom: 25px;">Los campos con <span class="required-star">*</span> son obligatorios.</p>
+      <form method="post" action="{{ form_action|default:'' }}" id="desarrolloForm">
+        {% csrf_token %}
+        {% if not desarrollo %}
+        <!-- Paso 1: Selección de niño y mes -->
+        <div class="form-grid">
+          {% if nino_preseleccionado %}
+            <div class="form-group">
+              <h4>Niño/a<span class="required-star">*</span></h4>
+              <input type="text" value="{{ nino_preseleccionado.nombres }} {{ nino_preseleccionado.apellidos }}" disabled>
+              <input type="hidden" name="nino" value="{{ nino_preseleccionado.id }}">
+            </div>
+          {% else %}
+            <div class="form-group">
+              <h4>Niño/a<span class="required-star">*</span></h4>
+              <select name="nino" required>
+                <option value="">-- Selecciona un niño/a --</option>
+                {% for nino in ninos %}
+                <option value="{{ nino.id }}" {% if nino_preseleccionado and nino.id == nino_preseleccionado.id %}selected{% endif %}>{{ nino.nombres }} {{ nino.apellidos }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+
+          <div class="form-group">
+            <h4>Mes a evaluar<span class="required-star">*</span></h4>
+            <input type="month" name="mes" required>
+          </div>
+        </div>
+        <!-- Eliminar el botón de generar resumen automático -->
+        <button class="botones" type="submit" id="generarResumenBtn"><i class="fas fa-cogs"></i> Generar Desarrollo</button>
+        {% else %}
+        <!-- Paso 2: Mostrar resumen generado y campos manuales -->
+        <input type="hidden" name="desarrollo_id" value="{{ desarrollo.id|default:'' }}">
+        <input type="hidden" name="nino_hidden" value="{{ desarrollo.nino.id }}">
+        <input type="hidden" name="mes_hidden" value="{{ desarrollo.fecha_fin_mes|date:'Y-m' }}">
+        
+        <div class="info-card" style="margin-bottom: 25px;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label><b>Niño/a:</b></label>
+              <input type="text" value="{{ desarrollo.nino.nombres }} {{ desarrollo.nino.apellidos }}" disabled>
+            </div>
+            <div class="form-group">
+              <label><b>Mes evaluado:</b></label>
+              <input type="text" value="{{ desarrollo.fecha_fin_mes|date:'F Y'|capfirst|date_es }}" disabled>
+            </div>
+            <div class="form-group">
+              <label><b>Seguimientos Registrados:</b></label>
+              <input type="text" value="{{ seguimientos_mes_count|default:'-' }}" disabled>
+            </div>
+            <div class="form-group">
+              <label><b>Novedades del Mes:</b></label>
+              <input type="text" value="{{ novedades_mes_count|default:'-' }}" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-bottom: 25px;">
+          <h4><i class="fas fa-chart-line"></i> Resumen del Mes (Automático)</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Logro del mes:</label>
+              <input type="text" value="{{ desarrollo.logro_mes|default_if_none:'-' }}" disabled>
+            </div>
+            <div class="form-group">
+              <label>Tendencia:</label>
+              <input type="text" value="{{ desarrollo.get_tendencia_valoracion_display|default_if_none:desarrollo.tendencia_valoracion|default_if_none:'-' }}" disabled>
+            </div>
+            <div class="form-group">
+              <label>Participación más frecuente:</label>
+              <input type="text" value="{{ desarrollo.participacion_frecuente|default_if_none:'-' }}" disabled>
+            </div>
+            <div class="form-group">
+              <label>Comportamiento más frecuente:</label>
+              <input type="text" value="{{ desarrollo.comportamiento_frecuente|default_if_none:'-' }}" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-bottom: 25px;">
+          <h4><i class="fas fa-brain"></i> Evaluación por Dimensiones (Automático)</h4>
+          <div class="form-group"><label>Cognitivo:</label>
+          <textarea name="evaluacion_cognitiva">{{ desarrollo.evaluacion_cognitiva|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group"><label>Comunicativo / Lenguaje:</label>
+          <textarea name="evaluacion_comunicativa">{{ desarrollo.evaluacion_comunicativa|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group"><label>Socioemocional:</label>
+          <textarea name="evaluacion_socio_afectiva">{{ desarrollo.evaluacion_socio_afectiva|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group"><label>Corporal / Motricidad:</label>
+          <textarea name="evaluacion_corporal">{{ desarrollo.evaluacion_corporal|default_if_none:'' }}</textarea>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h4><i class="fas fa-edit"></i> Conclusiones y Recomendaciones (Editable)</h4>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label>Fortalezas del mes:</label>
+            <textarea name="fortalezas_mes" style="min-height:70px;max-height:200px;">{{ desarrollo.fortalezas_mes|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label>Aspectos por mejorar:</label>
+            <textarea name="aspectos_a_mejorar" style="min-height:70px;max-height:200px;">{{ desarrollo.aspectos_a_mejorar|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label>Alertas del mes:</label>
+            <textarea name="alertas_mes" style="min-height:70px;max-height:200px;">{{ desarrollo.alertas_mes|default_if_none:'' }}</textarea>
+          </div>
+          <div style="margin:18px 0 18px 0; padding: 14px 14px 10px 14px; background: #f8f6ff; border-radius: 8px; border: 1px solid #e5d5f5;">
+            <strong style="font-size:1.08em;">Vista previa de novedades del mes:</strong>
+            <div style="max-height:120px; overflow-y:auto; margin-top:6px;">
+              {% if alertas_novedades %}
+                {% for nov in alertas_novedades %}
+                  <div style="margin-bottom:7px;">
+                    <span style="color:#3f833f; font-weight:bold;">{{ nov.tipo }}</span> :
+                    <span style="color:#3f833f; font-weight:bold;">{{ nov.get_tipo_display }}</span> :
+                    <a href="/novedades/detalle/{{ nov.id }}/" target="_blank">Ver novedad</a>
+                    {% if nov.descripcion %}<span style="color:#555;">- {{ nov.descripcion|truncatechars:60 }}</span>{% endif %}
+                  </div>
+                {% endfor %}
+              {% else %}
+                <span style="color:#888;">No hay novedades registradas este mes.</span>
+              {% endif %}
+            </div>
+          </div>
+          <hr style="border:none; border-top:1.5px dashed #e5d5f5; margin:18px 0 18px 0;">
+          <div class="form-group" style="margin-bottom:14px;">
+            <label>Conclusión general:</label>
+            <textarea name="conclusion_general" style="min-height:220px;max-height:500px; font-size:1.18em; line-height:1.5;">{{ desarrollo.conclusion_general|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label>Observaciones finales (opcional):</label>
+            <textarea name="observaciones_adicionales" placeholder="Observaciones adicionales" style="min-height:50px;max-height:140px;">{{ desarrollo.observaciones_adicionales|default_if_none:'' }}</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:10px;">
+            <label>Recomendaciones personales (opcional):</label>
+            <textarea name="recomendaciones_personales" placeholder="Recomendaciones personales" style="min-height:50px;max-height:140px;">{{ desarrollo.recomendaciones_personales|default_if_none:'' }}</textarea>
+          </div>
+        </div>
+        <button class="botones" type="submit"><i class="fas fa-save"></i> Guardar Registro</button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <div id="fechasExistentesJson" style="display:none">{{ fechas_existentes_por_nino|safe }}</div>
+
+  <script>
+    // Mostrar y ocultar mensaje de éxito
+    const mensajeExito = document.getElementById('mensajeExito');
+    if (mensajeExito) {
+      setTimeout(() => {
+        mensajeExito.style.display = 'none';
+      }, 5000);
+    }
+
+    // Recargar la página con los filtros de niño y mes para ver un informe existente
+    document.addEventListener('DOMContentLoaded', function() {
+      const ninoSelect = document.querySelector('select[name="nino"]');
+      const mesInput = document.querySelector('input[name="mes"]');
+      const generarBtn = document.getElementById('generarResumenBtn');
+      
+      // Convertimos el JSON de fechas existentes en un objeto de JavaScript
+      const fechasExistentesDiv = document.getElementById('fechasExistentesJson');
+      const fechasExistentesPorNino = fechasExistentesDiv ? JSON.parse(fechasExistentesDiv.textContent || '{}') : {};
+
+      function verificarYRecargar() {
+        const ninoId = ninoSelect.value;
+        const mesValue = mesInput.value; // YYYY-MM
+
+        if (ninoId && mesValue) {
+          // Verificamos si el mes seleccionado existe para el niño seleccionado
+          const fechasDelNino = fechasExistentesPorNino[ninoId] || [];
+          if (fechasDelNino.includes(mesValue)) {
+            // Si existe, recargamos la página para mostrar el informe
+            const url = new URL(window.location.href);
+            url.searchParams.set('nino', ninoId);
+            url.searchParams.set('mes', mesValue);
+            window.location.href = url.toString();
+          }
+          // Si no existe, no hacemos nada, permitiendo al usuario hacer clic en "Generar"
+        }
+      }
+
+      if (ninoSelect) ninoSelect.addEventListener('change', verificarYRecargar);
+      if (mesInput) mesInput.addEventListener('change', verificarYRecargar);
+    });
+  </script>
+
+
+</body>
+</html>

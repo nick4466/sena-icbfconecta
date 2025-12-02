@@ -1,0 +1,462 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planeaciones Pedagógicas</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<style>
+
+/* PALETA UNIFICADA */
+:root {
+    --primary-gradient-start: #667eea;
+    --primary-gradient-end: #764ba2;
+    --primary: #667eea;
+    --secondary: #764ba2;
+    --light-bg: #f3f5ff;
+    --white: #ffffff;
+    --dark: #333;
+}
+
+/* FONDO GENERAL */
+body {
+    margin: 0;
+    font-family: "Roboto", sans-serif;
+    background: var(--light-bg);
+}
+
+
+/* CONTENEDOR PRINCIPAL */
+.contenedor-tabla {
+    max-width: 1150px;
+    margin: 40px auto;
+    background: var(--white);
+    padding: 35px;
+    border-radius: 18px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* TITULO */
+h1 {
+    text-align: center;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* --- ACCIONES SUPERIORES --- */
+.acciones-superiores {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+/* BOTÓN NUEVO */
+.btn-nuevo {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    padding: 10px 22px;
+    font-size: 16px;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.btn-nuevo:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+/* BOTÓN PDF */
+.btn-pdf {
+    background: #ff6f61;
+    padding: 10px 22px;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.btn-pdf:hover {
+    background: #ff846f;
+}
+
+/* FILTRO */
+.filtro-mes {
+    background: rgba(255,255,255,0.8);
+    padding: 12px 20px;
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    backdrop-filter: blur(3px);
+}
+
+.filtro-mes label {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+.filtro-mes select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #cfcfea;
+    outline: none;
+}
+
+.filtro-mes select:focus {
+    border-color: var(--secondary);
+}
+
+/* TABLA */
+table {
+    width: 100%;
+    border-spacing: 0 10px;
+    font-size: 16px;
+}
+
+thead {
+    background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
+    color: white;
+}
+
+thead th {
+    padding: 14px;
+    text-transform: uppercase;
+    font-size: 14px;
+    text-align: center;
+}
+
+tbody tr {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+tbody td {
+    padding: 14px;
+    color: #444;
+    text-align: center; /* Centra el contenido horizontal */
+    vertical-align: middle; /* Centra el contenido vertical */
+}
+
+tbody tr:hover {
+    background: #e8e4ff;
+    transition: 0.2s ease;
+}
+
+/* ACCIONES */
+.acciones {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-accion {
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.btn-accion:hover {
+    transform: scale(1.1);
+}
+
+.btn-verde { background: #28a745; }
+.btn-azul { background: var(--primary); }
+.btn-rojo { background: #dc3545; }
+
+/* PAGINACIÓN */
+.pagination {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.pagination a, .pagination span {
+    padding: 8px 14px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.pagination a:hover {
+    background: #f0efff;
+}
+
+.pagination .current {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+}
+
+/* BOTÓN VOLVER */
+.contenedor-volver {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.btn-volver {
+    background: var(--primary);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.btn-volver:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+
+.btn-eliminar-seleccionados {
+    background: #fb5959; /* Rojo elegante */
+    color: white;
+    padding: 6px 14px; /* Más pequeño */
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transition: all 0.25s ease;
+}
+
+.btn-eliminar-seleccionados:hover {
+    background: #b71c1c; /* Rojo más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+}
+
+.btn-eliminar-seleccionados:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+</style>
+
+</head>
+
+<body>
+
+{% include 'madre/navbar_madre.html' %}
+
+<div class="contenedor-tabla">
+
+    <h1>Planeaciones Pedagógicas</h1>
+
+    <form method="get" class="acciones-superiores" style="width:100%; flex-wrap:wrap; gap:20px;">
+
+    <a href="{% url 'planeaciones:registrar_planeacion' %}" class="btn-nuevo">
+        <i class="fas fa-plus"></i> Nueva Planeación
+    </a>
+
+    <a href="{% url 'planeaciones:reporte_menu' %}" class="btn-pdf">
+        <i class="fas fa-file-pdf"></i> Generar PDF
+    </a>
+
+
+    <!-- FILTRO MES EXISTENTE -->
+    <div class="filtro-mes">
+        <label>Mes:</label>
+        <select name="mes" onchange="this.form.submit()">
+            <option value="">Todos</option>
+            {% for codigo, nombre in meses %}
+            <option value="{{ codigo }}" {% if mes_seleccionado == codigo %}selected{% endif %}>
+                {{ nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+</form>
+<button type="button" id="btn-eliminar-seleccionados" class="btn-eliminar-seleccionados">
+    <i class="fas fa-trash"></i> Eliminar 
+</button>
+
+<!-- FORM ELIMINACIÓN MASIVA -->
+<form id="form-eliminar-seleccionados" method="post" action="{% url 'planeaciones:eliminar_masivo' %}">
+
+    {% csrf_token %}
+
+
+   <table>
+    <thead>
+        <tr>
+            <th><input type="checkbox" id="select-all"></th>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Actividad</th>
+            <th>Intencionalidad</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% if planeaciones %}
+            {% for p in planeaciones %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="planeaciones_ids" value="{{ p.id }}" class="fila-check">
+                </td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ p.fecha }}</td>
+                <td>{{ p.nombre_experiencia }}</td>
+                <td>{{ p.intencionalidad_pedagogica }}</td>
+
+                <td class="acciones">
+                    <a href="{% url 'planeaciones:detalle_planeacion' p.id %}" class="btn-accion btn-verde">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{% url 'planeaciones:editar_planeacion' p.id %}" class="btn-accion btn-azul">
+                        <i class="fas fa-pen"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">No tienes planeaciones registradas.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+</form> <!-- fin form masivo -->
+
+
+    <!-- PAGINACIÓN -->
+    <div class="pagination">
+        {% if planeaciones.has_previous %}
+            <a href="?page=1{% if mes_seleccionado %}&mes={{ mes_seleccionado }}{% endif %}">&laquo; Primera</a>
+            <a href="?page={{ planeaciones.previous_page_number }}{% if mes_seleccionado %}&mes={{ mes_seleccionado }}{% endif %}">Anterior</a>
+        {% else %}
+            <span class="disabled">&laquo; Primera</span>
+            <span class="disabled">Anterior</span>
+        {% endif %}
+
+        <span class="current">Página {{ planeaciones.number }} de {{ planeaciones.paginator.num_pages }}</span>
+
+        {% if planeaciones.has_next %}
+            <a href="?page={{ planeaciones.next_page_number }}{% if mes_seleccionado %}&mes={{ mes_seleccionado }}{% endif %}">Siguiente</a>
+            <a href="?page={{ planeaciones.paginator.num_pages }}{% if mes_seleccionado %}&mes={{ mes_seleccionado }}{% endif %}">Última &raquo;</a>
+        {% else %}
+            <span class="disabled">Siguiente</span>
+            <span class="disabled">Última &raquo;</span>
+        {% endif %}
+    </div>
+
+    <div class="contenedor-volver">
+        <a href="{% url 'madre_dashboard' %}" class="btn-volver">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+</div>
+<script>
+document.getElementById("select-all").addEventListener("change", function() {
+    const checked = this.checked;
+    document.querySelectorAll(".fila-check").forEach(cb => cb.checked = checked);
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const btnEliminar = document.getElementById("btn-eliminar-seleccionados");
+    const formEliminar = document.getElementById("form-eliminar-seleccionados");
+
+    if (!btnEliminar) {
+        console.error("No se encontró el botón #btn-eliminar-seleccionados");
+        return;
+    }
+    if (!formEliminar) {
+        console.error("No se encontró el form #form-eliminar-seleccionados");
+        return;
+    }
+
+    btnEliminar.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        // recoge checkboxes dentro del formulario (importante si hay otras tablas)
+        const seleccionados = formEliminar.querySelectorAll(".fila-check:checked");
+
+        if (seleccionados.length === 0) {
+            Swal.fire({
+                title: "No hay planeaciones seleccionadas",
+                text: "Selecciona al menos una planeación para eliminar.",
+                icon: "info",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#667eea"
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: "¿Eliminar planeaciones seleccionadas?",
+            text: `Vas a eliminar ${seleccionados.length} planeación(es). Esta acción no se puede deshacer.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try {
+                    // submit seguro del form
+                    formEliminar.submit();
+                } catch (err) {
+                    console.error("Error al enviar el formulario:", err);
+                    Swal.fire({
+                        title: "Error",
+                        text: "Ocurrió un error al intentar eliminar. Revisa la consola del navegador.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                }
+            }
+        });
+    });
+
+});
+</script>
+
+
+
+</body>
+</html>

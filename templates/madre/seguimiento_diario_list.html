@@ -1,0 +1,764 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado de Seguimientos Diarios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+}
+
+
+
+    .tabla-registros {
+      max-width: 1200px; margin: 40px auto; background-color: rgba(255, 255, 255, 0.92);
+      border-radius: 14px; padding: 30px; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+   h1 { text-align: center; margin-bottom: 25px; font-size: 32px; color: #7a3eb1; }
+
+    .filtros-y-botones { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+
+    .filtros-form { display: flex; gap: 10px; align-items: center; }
+    .filtros-form input[type="date"] { padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+    .filtros-form button { background-color: #8e44ad; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+
+    .btn-agregar, .btn-volver {
+      background-color: #9B59B6; color: white; border: none; padding: 10px 20px;
+      font-size: 16px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s ease;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-agregar:hover { background-color: #8e44ad; }
+
+    .btn-volver {
+      background-color: #6c757d;
+    }
+    .btn-volver:hover {
+      background-color: #5a6268;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .acciones .btn-accion {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      padding: 4px 6px;
+      margin: 0 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform 0.2s;
+      text-decoration: none;
+      min-width: 28px;
+      min-height: 28px;
+    }
+    .acciones .btn-accion i { font-size: 15px; }
+    .acciones .btn-accion:hover { transform: scale(1.1); }
+    .btn-verde { background: #28a745; color: white; }
+    .btn-azul  { background: #007bff; color: white; }
+    .btn-rojo  { background: #dc3545; color: white; }
+
+    /* Estilos para las tarjetas de seguimiento */
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    /* --- NUEVO DISEÑO MODERNO DE TIMELINE Y CARDS --- */
+    .timeline-vertical {
+      position: relative;
+      margin: 40px 0;
+      padding-left: 40px;
+      border-left: 4px solid #e5d5f5;
+    }
+    .timeline-event {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -28px;
+      top: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(155,89,182,0.13);
+      border: 4px solid #fff;
+      z-index: 2;
+    }
+    .timeline-card-alta .timeline-dot { background: #7a3eb1; }
+    .timeline-card-media .timeline-dot { background: #5dade2; }
+    .timeline-card-baja .timeline-dot { background: #ffc107; color: #5e3370; }
+    .timeline-content {
+      margin-left: 30px;
+      width: 100%;
+    }
+    .timeline-date {
+      font-size: 18px;
+      color: #7a3eb1;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .seguimiento-card-modern {
+      background: #f8f6fa;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(155, 89, 182, 0.08);
+      padding: 22px 24px 16px 24px;
+      margin-bottom: 0;
+      border-left: 8px solid var(--card-color, #9B59B6);
+      display: flex;
+      flex-direction: column;
+      min-width: 260px;
+      min-height: 140px;
+      transition: box-shadow .2s, transform .2s;
+      margin-bottom: 40px;
+    }
+    .card-alta {
+      --card-color: #7a3eb1;
+    }
+    .card-media {
+      --card-color: #5dade2;
+    }
+    .card-baja {
+      --card-color: #e74c3c; /* Cambiado de amarillo a rojo */
+    }
+    .card-header-modern {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .avatar-modern {
+      width: 48px; height: 48px; border-radius: 50%; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: bold; box-shadow: 0 2px 8px rgba(155,89,182,0.13);
+      background: #9B59B6;
+      flex-shrink: 0;
+    }
+    .card-alta .avatar-modern { background: #7a3eb1; }
+    .card-media .avatar-modern { background: #5dade2; }
+    .card-baja .avatar-modern { background: #e74c3c; color: #fff; }
+    .card-header-modern h3 {
+      font-size: 20px;
+      color: #7a3eb1;
+      margin: 0 0 2px 0;
+      font-weight: 900;
+    }
+    .planeacion-label {
+      font-size: 16px;
+      color: #555;
+      font-weight: 600;
+      margin-top: 2px;
+      display: inline-block;
+      background: #f3f4f6;
+      padding: 3px 10px;
+      border-radius: 8px;
+    }
+    .card-body-modern p {
+      margin: 4px 0;
+      font-size: 15px;
+      color: #444;
+    }
+    .card-date {
+      font-size: 17px;
+      font-weight: 700;
+      color: #7a3eb1;
+      margin-bottom: 8px !important;
+    }
+    .card-footer-modern { 
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .cards-container-modern {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+      margin-top: 30px;
+    }
+
+    /* Estilos para la paginación */
+    .pagination { display: flex; justify-content: center; margin-top: 30px; }
+    .pagination a, .pagination .current { margin: 0 5px; padding: 8px 16px; text-decoration: none; border-radius: 6px; color: #9B59B6; border: 1px solid #e5d5f5; }
+    .pagination a:hover { background-color: #f3c1e5; }
+    .pagination .current { background-color: #9B59B6; color: white; border-color: #9B59B6; }
+
+    .empty-message { color: #777; margin-top: 20px; text-align: center; font-size: 18px; padding: 40px 0;}
+
+    .modal {
+      display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center;
+    }
+    .modal-contenido {
+      background-color: #fff; margin: 10% auto; padding: 30px; border: 1px solid #ccc;
+      width: 80%; max-width: 600px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      animation: zoomIn 0.3s ease; max-height: 80vh; overflow-y: auto;
+    }
+    @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .cerrar-modal { float: right; cursor: pointer; font-size: 24px; font-weight: bold; color: #aaa; }
+    .cerrar-modal:hover { color: #000; }
+    .modal-contenido h2 { margin-top: 0; color: #7a3eb1; }
+    .modal-contenido p { margin: 12px 0; font-size: 16px; line-height: 1.5; }
+    .modal-contenido hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+    .display-stars { color: #f5b301; font-size: 1.2rem; }
+    .display-stars .inactive { color: #ddd; }
+
+    .mensaje-success {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      transition: opacity 0.5s ease;
+    }
+    .mensaje-error {
+      background-color: #dc3545; /* Rojo */
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Estilos para el mensaje de notificación */
+    #mensajeNotificacion {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      transition: opacity 0.5s ease;
+    }
+    #mensajeNotificacion i {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .mensaje-success, .mensaje-error {
+      box-shadow: 0 4px 16px rgba(40,167,69,0.13);
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .display-stars {
+      font-size: 1.7rem !important;
+      letter-spacing: 2px;
+      color: #f5b301;
+    }
+    .display-stars .inactive {
+      color: #ddd;
+    }
+    .card-body-modern p {
+      margin: 4px 0;
+      font-size: 16px;
+      color: #444;
+    }
+    .planeacion-label {
+      font-size: 17px !important;
+      color: #7a3eb1 !important;
+      font-weight: bold;
+      background: #f3c4ff33;
+      padding: 3px 10px;
+      border-radius: 8px;
+      margin-top: 2px;
+      display: inline-block;
+    }
+
+    .dim-alto { color: #28a745; font-weight: bold; }
+    .dim-adecuado { color: #5dade2; font-weight: bold; }
+    .dim-proceso { color: #ffc107; font-weight: bold; }
+    .dim-bajo { color: #e74c3c; font-weight: bold; }
+
+    .seguimiento-checkbox {
+      transform: scale(1.5);
+      margin-right: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  {% include 'madre/navbar_madre.html' %}
+
+  <div class="tabla-registros">
+    <h1><i class="fas fa-clipboard-list"></i>
+      Seguimientos Diarios 
+      {% if nino_filtrado %}<br><small style="font-size: 18px; color: #555;">de {{ nino_filtrado.nombres }} {{ nino_filtrado.apellidos }}</small>{% endif %}
+    </h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mensaje-{{ message.tags }}" id="mensajeNotificacion" style="display: flex; align-items: center; gap: 12px; font-size: 17px; box-shadow: 0 4px 16px rgba(40,167,69,0.13);">
+          <i class="fas fa-check-circle" style="font-size: 22px; color: #fff; background: #28a745; border-radius: 50%; padding: 4px;"></i>
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="filtros-y-botones">
+      <form method="get" class="filtros-form">
+        {% if nino_id_filtro %}
+          <!-- FIX: Campo oculto para mantener el filtro del niño al filtrar por fecha -->
+          <input type="hidden" name="nino" value="{{ nino_id_filtro }}">
+        {% endif %}
+        <label for="fecha_filtro">Fecha:</label>
+        <input type="date" id="fecha_filtro" name="fecha" value="{{ fecha_filtro }}">
+        <button type="submit"><i class="fas fa-filter"></i> Filtrar</button>
+        <!-- FIX: El botón de limpiar ahora respeta si se está filtrando por un niño -->
+        <a href="{% url 'desarrollo:listar_seguimientos' %}{% if nino_id_filtro %}?nino={{ nino_id_filtro }}{% endif %}" class="btn-volver" style="margin-left: 5px;">Limpiar Filtro</a>
+      </form>
+
+      <div>
+        <a href="{% url 'gestion_ninos' %}" class="btn-volver"><i class="fas fa-arrow-left"></i> Volver a Gestión</a>
+        <a href="{% url 'desarrollo:registrar_seguimiento' %}{% if nino_id_filtro %}?nino={{ nino_id_filtro }}{% endif %}" class="btn-agregar">
+          <i class="fas fa-plus"></i> Añadir Seguimiento
+        </a>
+      </div>
+    </div>
+
+    <form method="post" action="{% url 'desarrollo:eliminar_seguimientos_lote' %}" id="bulk-delete-form">
+      {% csrf_token %}
+      {% if nino_id_filtro %}
+        <input type="hidden" name="nino_id" value="{{ nino_id_filtro }}">
+      {% endif %}
+
+      <div class="acciones-lote" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+        <div>
+          <input type="checkbox" id="seleccionar-todos" class="seguimiento-checkbox" style="margin-right: 8px;">
+          <label for="seleccionar-todos" style="font-weight: bold; color: #555;">Seleccionar/Deseleccionar Todos</label>
+        </div>
+        <button type="submit" id="btn-eliminar-seleccionados" class="btn-rojo" style="display: none; align-items: center; gap: 8px;"><i class="fas fa-trash"></i> Eliminar Seleccionados</button>
+      </div>
+
+    {% if seguimientos.object_list %} 
+      <!-- SIEMPRE VISTA DE LÍNEA DE TIEMPO -->
+      <div class="timeline-vertical">
+        {% for seguimiento in seguimientos.object_list %}
+          {% with valoracion=seguimiento.valoracion|default:0 %}
+            {% if valoracion >= 4 %} {# ALTA #}
+              {% with icon_class="fa-star" color_class="card-alta" timeline_color_class="timeline-card-alta" %}
+                <div class="timeline-event {{ timeline_color_class }}">
+                  <div class="timeline-dot"><i class="fas {{ icon_class }}"></i></div>
+                  <div class="timeline-content">
+                    <div class="timeline-date">{{ seguimiento.fecha|date:"d F, Y" }}</div>
+                    <div class="seguimiento-card-modern {{ color_class }}"
+                         data-nino="{{ seguimiento.nino.nombres }} {{ seguimiento.nino.apellidos }}"
+                         data-fecha="{{ seguimiento.fecha|date:'d F, Y' }}"
+                         data-planeacion="{{ seguimiento.planeacion.nombre_experiencia }}"
+                         data-participacion="{{ seguimiento.get_comportamiento_general_display }}"
+                         data-comportamiento="{{ seguimiento.get_estado_emocional_display }}"
+                         data-observaciones="{{ seguimiento.observaciones|default:'N/A' }}"
+                         data-valoracion="{{ seguimiento.valoracion|default:0 }}"
+                         data-obs-relevante="{{ seguimiento.observacion_relevante|yesno:'Sí,No' }}"                         data-evaluaciones='[{% for eval in seguimiento.evaluaciones_dimension.all %}{"dimension":"{{ eval.dimension.nombre|escapejs }}","desempeno":"{{ eval.get_desempeno_display|escapejs }}","observacion":"{{ eval.observacion|default_if_none:''|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+                      <div class="card-header-modern">
+                        <input type="checkbox" name="seguimiento_ids" value="{{ seguimiento.id }}" class="seguimiento-checkbox">
+                        <span class="avatar-modern {{ color_class }}">{{ seguimiento.nino.nombres|slice:":1" }}{{ seguimiento.nino.apellidos|slice:":1" }}</span>
+                        <div>
+                          <h3 style="margin-bottom: 2px;">{{ seguimiento.planeacion.nombre_experiencia }}</h3>
+                          <span class="planeacion-label" style="font-size: 17px; color: #7a3eb1; font-weight: bold;">{{ seguimiento.nino.nombres }} {{ seguimiento.nino.apellidos }}</span>
+                          {% if seguimiento.observacion_relevante %}
+                            <span title="Observación relevante" style="margin-left: 8px; color: #e74c3c; font-size: 18px;"><i class="fas fa-exclamation-circle"></i></span>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="card-body-modern">
+                        <p><strong>Comportamiento:</strong> <span style="color: #5dade2; font-weight: bold;">
+    <i class="fas fa-user-friends"></i> {{ seguimiento.get_comportamiento_general_display }}
+  </span></p>
+  <p><strong>Estado Emocional:</strong> <span style="color: #ffc107; font-weight: bold;">
+    <i class="fas fa-smile"></i> {{ seguimiento.get_estado_emocional_display }}
+  </span></p>
+  {% if seguimiento.observacion_relevante and seguimiento.observaciones %}
+    <div style="margin: 8px 0; background: #f8d7da; color: #721c24; border-radius: 8px; padding: 8px 12px; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>Observación relevante:</strong> {{ seguimiento.observaciones|truncatewords:10 }}</span>
+    </div>
+  {% else %}
+    <p><strong>Observaciones:</strong> <span style="color: #555;">{{ seguimiento.observaciones|default:'N/A'|truncatewords:10 }}</span></p>
+  {% endif %}
+  {% with evaluaciones=seguimiento.evaluaciones_dimension.all %}
+    {% if evaluaciones %}
+      {% regroup evaluaciones by desempeno as desempeno_list %}
+      <div style="margin-top: 10px;">
+        <strong>Cantidad de dimensiones evaluadas por desempeño:</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0; font-size: 15px;">
+          {% for group in desempeno_list %}
+            <li>
+              <span class="dim-{{ group.grouper }}">Dimensiones con desempeño {{ group.grouper|title }}:</span> {{ group.list|length }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
+                      </div>
+                      <div class="card-footer-modern">
+                        <span class="display-stars" style="font-size: 1.7rem;">
+                          {% for i in "12345" %}
+                            {% if forloop.counter <= seguimiento.valoracion %}★{% else %}<span class="inactive">★</span>{% endif %}
+                          {% endfor %}
+                        </span>
+                        <div class="acciones">
+                            <button type="button" class="btn-accion btn-verde ver-detalles" title="Ver Detalles"><i class="fas fa-eye"></i></button>
+                            <a href="{% url 'desarrollo:editar_seguimiento' seguimiento.id %}" class="btn-accion btn-azul" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'desarrollo:eliminar_seguimiento' seguimiento.id %}" class="btn-accion btn-rojo" title="Eliminar" onclick="return confirm('¿Estás segura de que deseas eliminar este seguimiento? Esta acción no se puede deshacer.');"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endwith %}
+            {% else %}
+              {% if valoracion >= 3 %} {# MEDIA #}
+                {% with icon_class="fa-check" color_class="card-media" timeline_color_class="timeline-card-media" %}
+                  <div class="timeline-event {{ timeline_color_class }}">
+                    <div class="timeline-dot"><i class="fas {{ icon_class }}"></i></div>
+                    <div class="timeline-content">
+                      <div class="timeline-date">{{ seguimiento.fecha|date:"d F, Y" }}</div>
+                      <div class="seguimiento-card-modern {{ color_class }}"
+                           data-nino="{{ seguimiento.nino.nombres }} {{ seguimiento.nino.apellidos }}"
+                           data-fecha="{{ seguimiento.fecha|date:'d F, Y' }}"
+                           data-planeacion="{{ seguimiento.planeacion.nombre_experiencia }}"
+                           data-participacion="{{ seguimiento.get_comportamiento_general_display }}"
+                           data-comportamiento="{{ seguimiento.get_estado_emocional_display }}"
+                           data-observaciones="{{ seguimiento.observaciones|default:'N/A' }}"
+                           data-valoracion="{{ seguimiento.valoracion|default:0 }}"
+                           data-obs-relevante="{{ seguimiento.observacion_relevante|yesno:'Sí,No' }}"                           data-evaluaciones='[{% for eval in seguimiento.evaluaciones_dimension.all %}{"dimension":"{{ eval.dimension.nombre|escapejs }}","desempeno":"{{ eval.get_desempeno_display|escapejs }}","observacion":"{{ eval.observacion|default_if_none:''|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+                        <div class="card-header-modern">
+                          <span class="avatar-modern {{ color_class }}">{{ seguimiento.nino.nombres|slice:":1" }}{{ seguimiento.nino.apellidos|slice:":1" }}</span>
+                          <input type="checkbox" name="seguimiento_ids" value="{{ seguimiento.id }}" class="seguimiento-checkbox">
+                          <div>
+                            <h3 style="margin-bottom: 2px;">{{ seguimiento.planeacion.nombre_experiencia }}</h3>
+                            <span class="planeacion-label" style="font-size: 17px; color: #7a3eb1; font-weight: bold;">{{ seguimiento.nino.nombres }} {{ seguimiento.nino.apellidos }}</span>
+                            {% if seguimiento.observacion_relevante %}
+                              <span title="Observación relevante" style="margin-left: 8px; color: #e74c3c; font-size: 18px;"><i class="fas fa-exclamation-circle"></i></span>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <div class="card-body-modern">
+                          <p><strong>Comportamiento:</strong> <span style="color: #5dade2; font-weight: bold;">
+    <i class="fas fa-user-friends"></i> {{ seguimiento.get_comportamiento_general_display }}
+  </span></p>
+  <p><strong>Estado Emocional:</strong> <span style="color: #ffc107; font-weight: bold;">
+    <i class="fas fa-smile"></i> {{ seguimiento.get_estado_emocional_display }}
+  </span></p>
+  {% if seguimiento.observacion_relevante and seguimiento.observaciones %}
+    <div style="margin: 8px 0; background: #f8d7da; color: #721c24; border-radius: 8px; padding: 8px 12px; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>Observación relevante:</strong> {{ seguimiento.observaciones|truncatewords:10 }}</span>
+    </div>
+  {% else %}
+    <p><strong>Observaciones:</strong> <span style="color: #555;">{{ seguimiento.observaciones|default:'N/A'|truncatewords:10 }}</span></p>
+  {% endif %}
+  {% with evaluaciones=seguimiento.evaluaciones_dimension.all %}
+    {% if evaluaciones %}
+      {% regroup evaluaciones by desempeno as desempeno_list %}
+      <div style="margin-top: 10px;">
+        <strong>Cantidad de dimensiones evaluadas por desempeño:</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0; font-size: 15px;">
+          {% for group in desempeno_list %}
+            <li>
+              <span class="dim-{{ group.grouper }}">Dimensiones con desempeño {{ group.grouper|title }}:</span> {{ group.list|length }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
+                        </div>
+                        <div class="card-footer-modern">
+                          <span class="display-stars" style="font-size: 1.7rem;">
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= seguimiento.valoracion %}★{% else %}<span class="inactive">★</span>{% endif %}
+                            {% endfor %}
+                          </span>
+                          <div class="acciones">
+                            <button type="button" class="btn-accion btn-verde ver-detalles" title="Ver Detalles"><i class="fas fa-eye"></i></button>
+                            <a href="{% url 'desarrollo:editar_seguimiento' seguimiento.id %}" class="btn-accion btn-azul" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'desarrollo:eliminar_seguimiento' seguimiento.id %}" class="btn-accion btn-rojo" title="Eliminar" onclick="return confirm('¿Estás segura de que deseas eliminar este seguimiento? Esta acción no se puede deshacer.');"><i class="fas fa-trash-alt"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endwith %}
+              {% else %}
+                {% with icon_class="fa-exclamation" color_class="card-baja" timeline_color_class="timeline-card-baja" %} {# BAJA #}
+                  <div class="timeline-event {{ timeline_color_class }}">
+                    <div class="timeline-dot"><i class="fas {{ icon_class }}"></i></div>
+                    <div class="timeline-content">
+                      <div class="timeline-date">{{ seguimiento.fecha|date:"d F, Y" }}</div>
+                      <div class="seguimiento-card-modern {{ color_class }}"
+                           data-nino="{{ seguimiento.nino.nombres }} {{ seguimiento.nino.apellidos }}"
+                           data-fecha="{{ seguimiento.fecha|date:'d F, Y' }}"
+                           data-planeacion="{{ seguimiento.planeacion.nombre_experiencia }}"
+                           data-participacion="{{ seguimiento.get_comportamiento_general_display }}"
+                           data-comportamiento="{{ seguimiento.get_estado_emocional_display }}"
+                           data-observaciones="{{ seguimiento.observaciones|default:'N/A' }}"
+                           data-valoracion="{{ seguimiento.valoracion|default:0 }}"
+                           data-obs-relevante="{{ seguimiento.observacion_relevante|yesno:'Sí,No' }}"                           data-evaluaciones='[{% for eval in seguimiento.evaluaciones_dimension.all %}{"dimension":"{{ eval.dimension.nombre|escapejs }}","desempeno":"{{ eval.get_desempeno_display|escapejs }}","observacion":"{{ eval.observacion|default_if_none:''|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+                        <div class="card-header-modern">
+                          <span class="avatar-modern {{ color_class }}">{{ seguimiento.nino.nombres|slice:":1" }}{{ seguimiento.nino.apellidos|slice:":1" }}</span>
+                          <input type="checkbox" name="seguimiento_ids" value="{{ seguimiento.id }}" class="seguimiento-checkbox">
+                          <div>
+                            <h3 style="margin-bottom: 2px;">{{ seguimiento.planeacion.nombre_experiencia }}</h3>
+                            <span class="planeacion-label" style="font-size: 17px; color: #7a3eb1; font-weight: bold;">{{ seguimiento.nino.nombres }} {{ seguimiento.nino.apellidos }}</span>
+                            {% if seguimiento.observacion_relevante %}
+                              <span title="Observación relevante" style="margin-left: 8px; color: #e74c3c; font-size: 18px;"><i class="fas fa-exclamation-circle"></i></span>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <div class="card-body-modern">
+                          <p><strong>Comportamiento:</strong> <span style="color: #5dade2; font-weight: bold;">
+    <i class="fas fa-user-friends"></i> {{ seguimiento.get_comportamiento_general_display }}
+  </span></p>
+  <p><strong>Estado Emocional:</strong> <span style="color: #ffc107; font-weight: bold;">
+    <i class="fas fa-smile"></i> {{ seguimiento.get_estado_emocional_display }}
+  </span></p>
+  {% if seguimiento.observacion_relevante and seguimiento.observaciones %}
+    <div style="margin: 8px 0; background: #f8d7da; color: #721c24; border-radius: 8px; padding: 8px 12px; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><strong>Observación relevante:</strong> {{ seguimiento.observaciones|truncatewords:10 }}</span>
+    </div>
+  {% else %}
+    <p><strong>Observaciones:</strong> <span style="color: #555;">{{ seguimiento.observaciones|default:'N/A'|truncatewords:10 }}</span></p>
+  {% endif %}
+  {% with evaluaciones=seguimiento.evaluaciones_dimension.all %}
+    {% if evaluaciones %}
+      {% regroup evaluaciones by desempeno as desempeno_list %}
+      <div style="margin-top: 10px;">
+        <strong>Cantidad de dimensiones evaluadas por desempeño:</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0; font-size: 15px;">
+          {% for group in desempeno_list %}
+            <li>
+              <span class="dim-{{ group.grouper }}">Dimensiones con desempeño {{ group.grouper|title }}:</span> {{ group.list|length }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  {% endwith %}
+                        </div>
+                        <div class="card-footer-modern">
+                          <span class="display-stars" style="font-size: 1.7rem;">
+                            {% for i in "12345" %}
+                              {% if forloop.counter <= seguimiento.valoracion %}★{% else %}<span class="inactive">★</span>{% endif %}
+                            {% endfor %}
+                          </span>
+                          <div class="acciones">
+                            <button type="button" class="btn-accion btn-verde ver-detalles" title="Ver Detalles"><i class="fas fa-eye"></i></button>
+                            <a href="{% url 'desarrollo:editar_seguimiento' seguimiento.id %}" class="btn-accion btn-azul" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'desarrollo:eliminar_seguimiento' seguimiento.id %}" class="btn-accion btn-rojo" title="Eliminar" onclick="return confirm('¿Estás segura de que deseas eliminar este seguimiento? Esta acción no se puede deshacer.');"><i class="fas fa-trash-alt"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endwith %}
+              {% endif %}
+            {% endif %}
+          {% endwith %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-message">No hay seguimientos diarios registrados para la fecha seleccionada.</p>
+    {% endif %}
+    </form>
+
+      <div class="pagination">
+        {% if seguimientos.has_previous %}
+          <a href="?page=1{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">&laquo; Primera</a>
+          <a href="?page={{ seguimientos.previous_page_number }}{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Anterior</a>
+        {% endif %}
+        <span class="current">
+          Página {{ seguimientos.number }} de {{ seguimientos.paginator.num_pages }}.
+        </span>
+        {% if seguimientos.has_next %}
+          <a href="?page={{ seguimientos.next_page_number }}{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Siguiente</a>
+          <a href="?page={{ seguimientos.paginator.num_pages }}{% for key, value in filtros.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Última &raquo;</a>
+        {% endif %}
+      </div>
+  </div>
+
+  <!-- Modal Detalles -->
+  <div id="modalDetalles" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar-modal">&times;</span>
+      <h2>Detalles del Seguimiento Diario</h2>
+      <p><strong>Niño/a:</strong> <span id="modal-nino"></span></p>
+      <p><strong>Fecha:</strong> <span id="modal-fecha"></span></p>
+      <p><strong>Planeación:</strong> <span id="modal-planeacion"></span></p>
+      <hr>
+      <p><strong>Comportamiento General:</strong> <span id="modal-participacion"></span></p>
+      <p><strong>Estado Emocional:</strong> <span id="modal-comportamiento"></span></p>
+      <p><strong>Observaciones:</strong> <span id="modal-observaciones"></span></p>
+      <p><strong>¿Observación Relevante?:</strong> <span id="modal-obs-relevante"></span></p>
+      <hr>
+      <h3 style="color: #7a3eb1; margin-top: 20px; margin-bottom: 15px;">
+        <i class="fas fa-tasks"></i> Evaluación por Dimensiones
+      </h3>
+      <div id="modal-evaluaciones-container" style="display: flex; flex-direction: column; gap: 15px;"></div>
+      <hr>
+      <p><strong>Valoración del Día:</strong> <span class="display-stars" id="modal-valoracion"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modalDetalles');
+    const cerrarBoton = document.querySelector('.cerrar-modal');
+
+    function cerrarModal() {
+      modal.style.display = 'none';
+    }
+
+    cerrarBoton.onclick = cerrarModal;
+
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        cerrarModal();
+      }
+    };
+
+    function renderStars(container, rating) {
+      let starsHTML = '';
+      const totalStars = 5;
+      const numRating = parseInt(rating, 10);
+      for (let i = 1; i <= totalStars; i++) {
+        starsHTML += (i <= numRating) ? '★' : '<span class="inactive">★</span>';
+      }
+      container.innerHTML = starsHTML;
+    }
+
+    document.querySelectorAll('.ver-detalles').forEach(button => {
+      button.addEventListener('click', function() {
+        let card = this.closest('.seguimiento-card-modern');
+        if (!card) {
+            card = this.closest('.timeline-event').querySelector('.seguimiento-card-modern');
+        }
+        const row = card;
+        
+        document.getElementById('modal-nino').textContent = row.dataset.nino;
+        document.getElementById('modal-fecha').textContent = row.dataset.fecha;
+        document.getElementById('modal-planeacion').textContent = row.dataset.planeacion;
+        document.getElementById('modal-participacion').textContent = row.dataset.participacion;
+        document.getElementById('modal-comportamiento').textContent = row.dataset.comportamiento;
+        document.getElementById('modal-observaciones').textContent = row.dataset.observaciones;
+        document.getElementById('modal-obs-relevante').textContent = row.dataset.obsRelevante;
+
+        renderStars(document.getElementById('modal-valoracion'), row.dataset.valoracion);
+
+        // --- NUEVO: Renderizar evaluaciones por dimensión ---
+        const evaluacionesContainer = document.getElementById('modal-evaluaciones-container');
+        evaluacionesContainer.innerHTML = ''; // Limpiar contenido anterior
+        try {
+          const evaluaciones = JSON.parse(row.dataset.evaluaciones);
+          if (evaluaciones.length > 0) {
+            evaluaciones.forEach(eval => {
+              const evalElement = document.createElement('div');
+              evalElement.style.padding = '10px';
+              evalElement.style.background = '#f9f9f9';
+              evalElement.style.borderRadius = '8px';
+              evalElement.style.borderLeft = '4px solid #a569bd';
+              
+              let observacionHTML = eval.observacion ? `<p style="margin: 5px 0 0 0; font-style: italic; color: #555;">Observación: ${eval.observacion}</p>` : '';
+              
+              evalElement.innerHTML = `
+                <p style="margin: 0;"><strong>${eval.dimension}:</strong> <span style="font-weight: bold; color: #7a3eb1;">${eval.desempeno}</span></p>
+                ${observacionHTML}
+              `;
+              evaluacionesContainer.appendChild(evalElement);
+            });
+          } else {
+            evaluacionesContainer.innerHTML = '<p>No se registraron evaluaciones por dimensión.</p>';
+          }
+        } catch (e) {
+          evaluacionesContainer.innerHTML = '<p>Error al cargar las evaluaciones.</p>';
+          console.error("Error parsing evaluaciones JSON:", e);
+        }
+
+        modal.style.display = 'flex';
+      });
+    });
+
+    // Ocultar el mensaje de éxito después de 5 segundos
+    const mensajeNotificacion = document.getElementById('mensajeNotificacion');
+    if (mensajeNotificacion) {
+      setTimeout(() => {
+        mensajeNotificacion.style.opacity = '0';
+        setTimeout(() => { mensajeNotificacion.style.display = 'none'; }, 500);
+      }, 5000);
+    }
+
+    // --- LÓGICA PARA SELECCIÓN MÚLTIPLE ---
+    const seleccionarTodosCheckbox = document.getElementById('seleccionar-todos');
+    const seguimientoCheckboxes = document.querySelectorAll('.seguimiento-checkbox:not(#seleccionar-todos)');
+    const btnEliminarSeleccionados = document.getElementById('btn-eliminar-seleccionados');
+    const bulkDeleteForm = document.getElementById('bulk-delete-form');
+
+    function actualizarBotonEliminar() {
+      const algunoSeleccionado = Array.from(seguimientoCheckboxes).some(cb => cb.checked);
+      btnEliminarSeleccionados.style.display = algunoSeleccionado ? 'inline-flex' : 'none';
+    }
+
+    seleccionarTodosCheckbox.addEventListener('change', function() {
+      seguimientoCheckboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+      });
+      actualizarBotonEliminar();
+    });
+
+    seguimientoCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        if (!this.checked) {
+          seleccionarTodosCheckbox.checked = false;
+        } else if (Array.from(seguimientoCheckboxes).every(cb => cb.checked)) {
+          seleccionarTodosCheckbox.checked = true;
+        }
+        actualizarBotonEliminar();
+      });
+    });
+
+    bulkDeleteForm.addEventListener('submit', function(e) {
+      if (!confirm('¿Estás segura de que deseas eliminar todos los seguimientos seleccionados? Esta acción no se puede deshacer.')) {
+        e.preventDefault();
+      }
+    });
+  </script>
+
+</body>
+</html>

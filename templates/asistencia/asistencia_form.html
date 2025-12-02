@@ -1,0 +1,721 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ICBF Conecta - Llamado de Asistencia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+
+
+  <style>
+/* ============================================================
+   ESTILOS PRINCIPALES DASHBOARD — ICBF CONECTA
+   Unificación total de estilos — Azul corporativo
+   ============================================================ */
+
+/* ------------ BASE ------------ */
+* { box-sizing: border-box; }
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#f3f6fa;
+  color:#222;
+}
+
+/* ------------ HEADER ------------ */
+.mc-header {
+  width: 100%;
+  background: white;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.29);
+  
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+
+/* IZQUIERDA: logo + título */
+.mc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+
+.mc-header-left { display:flex; align-items:center; gap:12px; }
+.mc-logo {
+  height: 48px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.mc-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #004080;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+
+/* NAV CENTRAL */
+.mc-header-nav ul {
+  display: flex;
+  gap: 18px;
+  list-style: none;
+}
+
+.mc-header-nav a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  color: #004080;
+  background: #e8f1ff;
+  padding: 9px 16px;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.mc-header-nav a i {
+  margin-right: 6px;
+}
+
+.mc-header-nav a:hover { color:#2b28ca; }
+
+.mc-header-right { display:flex; align-items:center; gap:18px; }
+
+/* ------------ NOTIFICACIONES ------------ */
+.notif-container { position:relative; }
+
+.notif-btn {
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:24px;
+  color:#006bff;
+  padding:6px;
+  transition:.2s;
+}
+.notif-btn:hover { color:#0047b3; }
+
+.notif-count {
+  position:absolute;
+  top:-6px; right:-6px;
+  background:#ff3b3b;
+  color:#fff;
+  font-size:11px;
+  padding:2px 6px;
+  border-radius:50px;
+  font-weight:700;
+}
+
+.notif-panel {
+  position:absolute;
+  right:0;
+  top:44px;
+  width:340px;
+  background:white;
+  border-radius:16px;
+  box-shadow:0 10px 28px rgba(0,0,0,0.12);
+  display:none;
+  animation:fadeIn .18s ease-out forwards;
+}
+.notif-panel.visible { display:block; }
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(-8px); }
+  to   { opacity:1; transform:none; }
+}
+
+.notif-header {
+  padding:12px 18px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:600;
+  border-bottom:1px solid #e6efff;
+}
+
+.notif-item {
+  padding:12px 16px;
+  margin:8px;
+  background:#eaf1ff;
+  border-radius:12px;
+}
+.notif-item.unread {
+  background:#d6e6ff;
+  border-left:4px solid #006bff;
+}
+
+/* ------------ LOGOUT ------------ */
+.logout-btn {
+  background:linear-gradient(90deg,#003d80,#006bff);
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  transition:.25s;
+}
+.logout-btn:hover { opacity:.85; transform:translateY(-2px); }
+
+/* ------------ TÍTULOS Y CARDS ------------ */
+.main-title {
+  margin:25px auto;
+  width:85%;
+  padding:20px;
+  text-align:center;
+  background:white;
+  border-radius:20px;
+  color:#0050c8;
+  font-size:28px;
+  font-weight:700;
+  box-shadow:0 6px 14px rgba(0,0,0,0.06);
+}
+
+.card {
+  background:white;
+  padding:28px;
+  width:85%;
+  margin:0 auto 40px;
+  border-radius:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.07);
+}
+
+/* ------------ TABLA ------------ */
+table {
+  width:100%;
+  margin-top:25px;
+  border-collapse:separate;
+  border-spacing:0 12px;
+}
+
+th {
+  background:linear-gradient(90deg,#0056b3,#007bff);
+  color:white;
+  padding:14px;
+  border-radius:12px;
+  font-weight:600;
+}
+
+td {
+  background:#e8f1ff;
+  padding:14px;
+  text-align:center;
+  border-radius:12px;
+  font-weight:500;
+}
+
+/* ------------ RADIO BUTTONS ------------ */
+.radio-group label {
+  padding:8px 14px;
+  border-radius:10px;
+  background:#dfeaff;
+  border:2px solid #8bb6ff;
+  cursor:pointer;
+  font-weight:600;
+  color:#003366;
+  transition:.25s;
+}
+
+input[type="radio"]:checked + label {
+  background:linear-gradient(90deg,#004a99,#007bff);
+  color:white;
+  border-color:#0056b3;
+}
+
+/* ------------ MODAL ------------ */
+.modal {
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.45);
+  z-index:9998;
+}
+
+.modal.active { display:flex; }
+
+.modal-content {
+  background:white;
+  width:92%;
+  max-width:600px;
+  border-radius:18px;
+  padding:30px;
+  box-shadow:0 12px 32px rgba(0,0,0,0.2);
+  position:relative;
+}
+
+.modal-close {
+  position:absolute;
+  right:22px;
+  top:18px;
+  font-size:24px;
+  background:none;
+  border:none;
+  color:#006eff;
+  cursor:pointer;
+}
+
+/* ------------ FORM ------------ */
+.modal-grid { display:grid; gap:16px; }
+
+.form-group label {
+  font-weight:600;
+  color:#003366;
+}
+
+.form-group select,
+.form-group textarea,
+.form-group input[type="file"] {
+  width:100%;
+  padding:11px 13px;
+  border-radius:10px;
+  border:2px solid #8bb6ff;
+  background:#eef4ff;
+  font-weight:500;
+}
+
+/* ============================================================
+   BOTONES PRINCIPALES — ESTILO UNIFICADO CORPORATIVO
+   ============================================================ */
+
+.btn {
+  padding:10px 18px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:white;
+  background:linear-gradient(90deg,#003d80,#007bff);
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+  transition:.25s;
+}
+
+.btn:hover {
+  transform:translateY(-2px);
+  opacity:.92;
+}
+
+.btn:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+
+/* Variantes mínimas */
+.btn-small {
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:8px;
+
+}
+/* -------- Botones "Todos presentes / Todos ausentes" -------- */
+
+.btn-presente, .btn-ausente {
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.25s ease-in-out;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Botón verde */
+.btn-presente {
+  background: linear-gradient(135deg, #1f8c4b, #27ae60);
+}
+
+.btn-presente:hover {
+  background: linear-gradient(135deg, #18723d, #1e964f);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
+
+/* Botón rojo */
+.btn-ausente {
+  background: linear-gradient(135deg, #b13228, #e74c3c);
+}
+
+.btn-ausente:hover {
+  background: linear-gradient(135deg, #92271f, #c44135);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
+
+/* Pequeño efecto al presionar */
+.btn-presente:active, .btn-ausente:active {
+  transform: scale(0.97);
+}
+
+/* -------- Botón Guardar Registro -------- */
+
+.btn-guardar {
+  padding: 12px 22px;
+  background: linear-gradient(135deg, #4c1caf, #7a3eb1); /* Morado profesional */
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.25s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-guardar i {
+  font-size: 18px; 
+}
+
+.btn-guardar:hover {
+  background: linear-gradient(135deg, #3a1485, #6a33a1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.22);
+}
+
+.btn-guardar:active {
+  transform: scale(0.97);
+}
+
+
+
+/* Fin del CSS */
+</style>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="mc-header">
+    <div class="mc-header-left">
+      <img src="{% static 'img/logoSinFondo.png' %}" alt="Logo ICBF Conecta" class="mc-logo">
+      <h1 class="mc-title">ICBF Conecta</h1>
+    </div>
+
+    <nav class="mc-header-nav">
+      <ul>
+        <li><a href="{% url 'madre_dashboard' %}"><i class="fas fa-arrow-left"></i> Volver</a></li>
+        <li><a href="{% url 'novedades:novedades_list' %}"><i class="fas fa-exclamation-circle"></i> Reportar Novedad</a></li>
+      </ul>
+    </nav>
+
+    <div class="mc-header-right">
+      <!-- Notificaciones -->
+      <div class="notif-container">
+        <button id="notifToggle" class="notif-btn" aria-controls="notifPanel" aria-expanded="false" title="Notificaciones">
+          <i class="fas fa-bell"></i>
+          <span id="notifCount" class="notif-count">{{ notif_count }}</span>
+        </button>
+
+        <div id="notifPanel" class="notif-panel" role="region" aria-hidden="true">
+          <div class="notif-header">
+            <h4 style="margin:0;">Notificaciones</h4>
+            <button id="markAllRead" class="notif-mark-all" type="button">Marcar todo</button>
+          </div>
+
+          <div class="notif-list">
+            {% if notifications %}
+              {% for n in notifications %}
+                <div class="notif-item {% if not n.read %}unread{% endif %}">
+                  <p style="margin:0; font-weight:700;">{{ n.title }}</p>
+                  {% if n.message %}<p style="margin:6px 0 0 0; color:#444;">{{ n.message|truncatechars:80 }}</p>{% endif %}
+                  <div class="notif-footer">
+                    <small class="notif-date">{{ n.created_at|timesince }} atrás</small>
+                    {% if not n.read %}<span class="notif-dot" aria-hidden="true"></span>{% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p style="text-align:center; padding:12px; color:#666;">Sin notificaciones</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <form method="post" action="{% url 'logout' %}" id  ="logout-form" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn" onclick="return confirmarLogout();"><i class="fas fa-sign-out-alt"></i></button>
+      </form>
+    </div>
+  </header>
+
+  <!-- ========== PAGE TITLE + CARD ========== -->
+  <div class="main-title">ICBF - CONECTA | Llamado de Asistencia</div>
+
+  <div class="card">
+    {% if mensaje %}
+      <div style="background:#e6ffed;padding:12px;border-radius:8px;margin-bottom:12px;color:#155724;">{{ mensaje }}</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="asistencia-form">
+      {% csrf_token %}
+      <div style="margin-bottom:12px;">
+        <label for="fecha" style="font-weight:700;color:#7a3eb1;">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" value="{{ fecha_hoy }}" required>
+      </div>
+<div style="margin-bottom:10px; text-align:center;">
+  <button type="button" id="select-all" class="btn-presente">
+    <i class="fas fa-check-circle"></i> Todos presentes
+  </button>
+
+  <button type="button" id="select-all-ausentes" class="btn-ausente">
+    <i class="fas fa-times-circle"></i> Todos ausentes
+  </button>
+</div>
+
+
+      <table>
+        <thead>
+          <tr><th>#</th><th>Nombre Completo</th><th>Asistencia</th><th>Historial</th></tr>
+        </thead>
+        <tbody>
+          {% for nino in ninos %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ nino.nombres }} {{ nino.apellidos }}</td>
+              <td>
+                <div class="radio-group">
+                  <input type="radio" id="presente-{{ nino.id }}" name="nino_{{ nino.id }}" value="Presente">
+                  <label for="presente-{{ nino.id }}" class="presente">Presente</label>
+
+                  <input type="radio" id="ausente-{{ nino.id }}" name="nino_{{ nino.id }}" value="Ausente" data-id="{{ nino.id }}">
+                  <label for="ausente-{{ nino.id }}" class="ausente">Ausente</label>
+
+                  <input type="radio" id="justificado-{{ nino.id }}" name="nino_{{ nino.id }}" value="Justificado" disabled>
+                  <label for="justificado-{{ nino.id }}" class="justificado">Justificado</label>
+                </div>
+              </td>
+              <td><a href="{% url 'historial_asistencia' nino.id %}" class="btn-mini-historial"><i class="fas fa-history"></i> Ver</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div style="margin-top:20px;">
+        <button type="submit" class="btn-guardar">
+  <i class="fas fa-save"></i> Guardar Registro
+</button>{}
+
+      </div>
+    </form>
+  </div>
+
+  <!-- ===== MODAL JUSTIFICAR ===== -->
+  <div id="modal-justificar" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <h2 style="color:#7a3eb1;text-align:center;margin-top:0;">Justificar Ausencia</h2>
+
+      <form id="form-justificacion" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="nino_id" id="modal-nino-id">
+        <input type="hidden" name="fecha" id="modal-fecha">
+
+        <div class="modal-grid">
+          <div class="form-group">
+            <label for="tipo">Tipo de falta:</label>
+            <select id="tipo" name="tipo" required>
+              <option value="">Selecciona</option>
+              <option value="Médica">Médica</option>
+              <option value="Familiar">Familiar</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Otra">Otra</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="3" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="observaciones">Observaciones:</label>
+            <textarea id="observaciones" name="observaciones" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="archivo_pdf">Adjuntar soporte (PDF):</label>
+            <input id="archivo_pdf" type="file" name="archivo_pdf" accept="application/pdf">
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button type="button" id="guardarJustificacionBtn" class="btn-guardar-just">Guardar Justificación</button>
+          <button type="button" id="sinJustificarBtn" class="btn-sin-justificar">Sin justificar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS UNIFICADOS ========== -->
+  <script>
+    /* ---------- CSRF (desde cookie) ---------- */
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i=0;i<cookies.length;i++){
+          const c = cookies[i].trim();
+          if (c.substring(0, name.length+1) === (name + '=')) {
+            cookieValue = decodeURIComponent(c.substring(name.length+1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    /* ---------- FUNCIONES UI ---------- */
+    function confirmarLogout(){ return confirm('¿Seguro que quieres cerrar sesión?'); }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const notifToggle = document.getElementById('notifToggle');
+      const notifPanel  = document.getElementById('notifPanel');
+      const notifCount  = document.getElementById('notifCount');
+      const markAllRead = document.getElementById('markAllRead');
+
+      const modal = document.getElementById('modal-justificar');
+      const modalNinoInput = document.getElementById('modal-nino-id');
+      const modalFechaInput = document.getElementById('modal-fecha');
+      const guardarBtn = document.getElementById('guardarJustificacionBtn');
+      const sinJustBtn = document.getElementById('sinJustificarBtn');
+      const modalClose = document.getElementById('modal-close');
+
+      /* Toggle notificaciones */
+      if (notifToggle && notifPanel) {
+        notifToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          notifPanel.classList.toggle('visible');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!notifPanel.contains(e.target) && !notifToggle.contains(e.target)) {
+            notifPanel.classList.remove('visible');
+          }
+        });
+      }
+
+      /* Marcar todo como leído (AJAX POST) */
+      if (markAllRead) {
+        markAllRead.addEventListener('click', async () => {
+          try {
+            const resp = await fetch("{% url 'marcar_todo_leido' %}", {
+              method: "POST",
+              headers: { "X-CSRFToken": csrftoken },
+              body: JSON.stringify({})
+            });
+            const data = await resp.json();
+            if (data.success) {
+              document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+              if (notifCount) notifCount.textContent = '0';
+            }
+          } catch (err) {
+            console.error('Error marcar todo leído:', err);
+          }
+        });
+      }
+
+      /* Select all presente/ausente */
+      const selectAllPresente = document.getElementById('select-all');
+      const selectAllAusentes = document.getElementById('select-all-ausentes');
+      if (selectAllPresente) {
+        selectAllPresente.addEventListener('click', () => {
+          document.querySelectorAll("input[type='radio'][value='Presente']:not(:disabled)").forEach(r => r.checked = true);
+        });
+      }
+      if (selectAllAusentes) {
+        selectAllAusentes.addEventListener('click', () => {
+          document.querySelectorAll("input[type='radio'][value='Ausente']:not(:disabled)").forEach(r => r.checked = true);
+        });
+      }
+
+      /* Cuando se marca "Ausente" abrimos modal y cargamos nino+fecha */
+      document.querySelectorAll("input[type='radio'][value='Ausente']").forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            // abrir modal y asignar nino y fecha
+            const ninoId = e.target.getAttribute('data-id');
+            const fecha = document.getElementById('fecha') ? document.getElementById('fecha').value : '';
+            if (!fecha) { alert('Selecciona la fecha antes de justificar.'); e.target.checked = false; return; }
+            modalNinoInput.value = ninoId;
+            modalFechaInput.value = fecha;
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden','false');
+          }
+        });
+      });
+
+      /* Cerrar modal */
+      modalClose && modalClose.addEventListener('click', () => {
+        modal.classList.remove('active'); modal.setAttribute('aria-hidden','true');
+      });
+      window.addEventListener('click', (ev) => {
+        if (ev.target === modal) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); }
+      });
+
+      /* Guardar justificacion con FormData para aceptar PDF */
+      if (guardarBtn) {
+        guardarBtn.addEventListener('click', async () => {
+          const form = document.getElementById('form-justificacion');
+          const fd = new FormData(form);
+
+          // Validaciones básicas
+          if (!fd.get('tipo') || !fd.get('descripcion')) {
+            alert('Completa tipo y descripción.');
+            return;
+          }
+
+          try {
+            const resp = await fetch("{% url 'crear_novedad_desde_asistencia' %}", {
+              method: 'POST',
+              headers: { 'X-CSRFToken': csrftoken },
+              body: fd
+            });
+            const data = await resp.json();
+            if (data.success) {
+              // marcar radio Justificado en UI, deshabilitar radios del niño
+              const nId = fd.get('nino_id');
+              const justRadio = document.getElementById(`justificado-${nId}`);
+              if (justRadio) { justRadio.checked = true; }
+              document.getElementsByName(`nino_${nId}`).forEach(r => r.disabled = true);
+
+              alert('Justificación guardada ✅');
+              modal.classList.remove('active'); modal.setAttribute('aria-hidden','true');
+            } else {
+              alert('Error al guardar la justificación. Revisa la consola.');
+            }
+          } catch (err) {
+            console.error('Error AJAX guardarJustificacion:', err);
+            alert('Error de red al guardar la justificación.');
+          }
+        });
+      }
+
+      /* Sin justificar: cerrar modal y dejar Ausente marcado */
+      if (sinJustBtn) {
+        sinJustBtn.addEventListener('click', () => {
+          modal.classList.remove('active'); modal.setAttribute('aria-hidden','true');
+        });
+      }
+    }); // DOMContentLoaded
+  </script>
+
+</body>
+</html>
